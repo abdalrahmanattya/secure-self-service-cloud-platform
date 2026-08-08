@@ -4,6 +4,7 @@ set -eu
 repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 renderer="$repo_root/tools/diagrams/node_modules/.bin/mmdc"
 config="$repo_root/tools/diagrams/mermaid-config.json"
+puppeteer_config="$repo_root/tools/diagrams/puppeteer-config.json"
 source_dir="$repo_root/docs/diagrams/src"
 output_dir="$repo_root/docs/diagrams/rendered"
 
@@ -25,6 +26,7 @@ for source in "$source_dir"/*.mmd; do
     --input "$source" \
     --output "$output_dir/$name.svg" \
     --configFile "$config" \
+    --puppeteerConfigFile "$puppeteer_config" \
     --outputFormat svg \
     --quiet
 done
