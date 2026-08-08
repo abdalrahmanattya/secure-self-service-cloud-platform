@@ -79,5 +79,10 @@ the other provider must use a separate installation and state boundary.
 These diagrams are rendered from the
 [`docs/diagrams/src/`](diagrams/src/system-context.mmd) directory with a
 pinned Mermaid CLI. The rendered SVGs are committed so documentation readers
-can view them without a local toolchain, while CI rerenders them and rejects
-output drift.
+can view them without a local toolchain. Each committed SVG contains a
+content-only SHA-256 freshness fingerprint covering its source, Mermaid
+configuration, Puppeteer configuration, and package lock. CI renders every
+source into a clean temporary directory on Ubuntu and checks those fingerprints
+and one-to-one source/output names. The check does not require byte-identical
+SVGs across operating systems, because browser rendering bytes can vary by
+platform.

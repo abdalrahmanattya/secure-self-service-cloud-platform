@@ -34,39 +34,14 @@ jobs:
       - name: Install diagram dependencies
         run: npm ci --prefix tools/diagrams
 
-      - name: Render Mermaid diagrams
-        run: scripts/render-diagrams.sh
-
-      - name: Reject rendered diagram drift
+      - name: Render and verify Mermaid diagrams
         shell: sh
         run: |
           set -eu
-          rendered_dir='docs/diagrams/rendered'
-          drift=0
-
-          if git diff --quiet -- "$rendered_dir"; then
-            printf '%s\n' 'Tracked rendered diagrams are unchanged.'
-          else
-            printf '%s\n' 'Tracked rendered diagrams differ from the committed output:' >&2
-            git diff --name-status -- "$rendered_dir" >&2
-            drift=1
-          fi
-
-          untracked=$(git ls-files --others --exclude-standard -- "$rendered_dir")
-          if [ -n "$untracked" ]; then
-            printf '%s\n' 'New untracked rendered diagram files were generated:' >&2
-            printf '%s\n' "$untracked" >&2
-            drift=1
-          else
-            printf '%s\n' 'No untracked rendered diagram files found.'
-          fi
-
-          if [ "$drift" -ne 0 ]; then
-            printf '%s\n' 'Rendered diagram drift detected; regenerate and commit the SVG outputs.' >&2
-            exit 1
-          fi
-
-          printf '%s\n' 'Rendered diagram outputs match the committed files.'
+          rendered_dir=$(mktemp -d)
+          trap 'rm -rf "$rendered_dir"' EXIT HUP INT TERM
+          ./scripts/render-diagrams.sh --output-dir "$rendered_dir"
+          ./scripts/check-rendered-diagrams.sh --rendered-dir "$rendered_dir"
 
       - name: Build documentation strictly
         run: python -m mkdocs build --strict --clean

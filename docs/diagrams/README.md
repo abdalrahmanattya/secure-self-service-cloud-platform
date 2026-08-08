@@ -36,6 +36,17 @@ From the repository root, install the pinned renderer and render every source:
 ```sh
 npm ci --prefix tools/diagrams
 scripts/render-diagrams.sh
+scripts/check-rendered-diagrams.sh
+```
+
+With no argument, the renderer refreshes the committed output directory. To
+render into another directory, use the explicit output option:
+
+```sh
+temporary_dir=$(mktemp -d)
+trap 'rm -rf "$temporary_dir"' EXIT
+scripts/render-diagrams.sh --output-dir "$temporary_dir"
+scripts/check-rendered-diagrams.sh --rendered-dir "$temporary_dir"
 ```
 
 To verify deterministic output, render twice and compare checksums:
@@ -47,6 +58,13 @@ scripts/render-diagrams.sh
 test "$first" = "$(shasum docs/diagrams/rendered/*.svg)"
 ```
 
-CI runs the same render command and fails when the generated SVG differs from
-the committed output. The Mermaid configuration fixes IDs, typography, theme,
-and layout settings so the result is reviewable and reproducible.
+Every SVG receives a deterministic content-only SHA-256 fingerprint tied to
+its `.mmd` source, Mermaid configuration, Puppeteer configuration, and package
+lock. The checker verifies matching source/output basenames, missing and orphan
+files, and the expected fingerprint in both the temporary and committed
+outputs.
+
+CI runs Mermaid on `ubuntu-24.04` into a clean temporary directory, proving
+that every current source renders without overwriting committed SVGs. It then
+runs the freshness checker. The workflow intentionally does not compare SVG
+bytes across operating systems; browser and layout bytes can vary by platform.
