@@ -1,0 +1,22 @@
+{
+  "deterministicIds": true,
+  "deterministicIDSeed": "secure-self-service-cloud-platform",
+  "securityLevel": "strict",
+  "theme": "base",
+  "themeVariables": {
+    "fontFamily": "Arial, sans-serif",
+    "primaryColor": "#e8f0fe",
+    "primaryTextColor": "#172033",
+    "primaryBorderColor": "#315c9b",
+    "lineColor": "#52606d",
+    "secondaryColor": "#f1f5f9",
+    "tertiaryColor": "#fff7ed"
+  },
+  "flowchart": {
+    "htmlLabels": false,
+    "curve": "basis",
+    "nodeSpacing": 50,
+    "rankSpacing": 70,
+    "useMaxWidth": true
+  }
+}
