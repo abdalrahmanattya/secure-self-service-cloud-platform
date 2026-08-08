@@ -1,0 +1,1076 @@
+{
+  "components": {
+    "schemas": {
+      "CloudProvider": {
+        "enum": [
+          "aws",
+          "azure"
+        ],
+        "title": "CloudProvider",
+        "type": "string"
+      },
+      "ClusterSize": {
+        "enum": [
+          "small",
+          "medium",
+          "large"
+        ],
+        "title": "ClusterSize",
+        "type": "string"
+      },
+      "DataClassification": {
+        "enum": [
+          "public",
+          "internal",
+          "confidential",
+          "restricted"
+        ],
+        "title": "DataClassification",
+        "type": "string"
+      },
+      "EnvironmentRequest": {
+        "additionalProperties": false,
+        "description": "Raw request submitted by a user; deliberately contains no provider.",
+        "properties": {
+          "application": {
+            "minLength": 1,
+            "title": "Application",
+            "type": "string"
+          },
+          "business_justification": {
+            "minLength": 1,
+            "title": "Business Justification",
+            "type": "string"
+          },
+          "cluster_size": {
+            "$ref": "#/components/schemas/ClusterSize"
+          },
+          "cost_centre": {
+            "minLength": 1,
+            "title": "Cost Centre",
+            "type": "string"
+          },
+          "data_classification": {
+            "$ref": "#/components/schemas/DataClassification"
+          },
+          "environment": {
+            "$ref": "#/components/schemas/EnvironmentType"
+          },
+          "monthly_budget": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Monthly Budget"
+          },
+          "network_cidr": {
+            "format": "ipvanynetwork",
+            "title": "Network Cidr",
+            "type": "string"
+          },
+          "non_production_expiry": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Non Production Expiry"
+          },
+          "owner": {
+            "minLength": 1,
+            "title": "Owner",
+            "type": "string"
+          },
+          "region": {
+            "minLength": 1,
+            "title": "Region",
+            "type": "string"
+          }
+        },
+        "required": [
+          "application",
+          "environment",
+          "owner",
+          "cost_centre",
+          "data_classification",
+          "region",
+          "network_cidr",
+          "cluster_size",
+          "monthly_budget",
+          "business_justification"
+        ],
+        "title": "EnvironmentRequest",
+        "type": "object"
+      },
+      "EnvironmentRequestRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/SimulationOutcome"
+          },
+          "request": {
+            "$ref": "#/components/schemas/ResolvedEnvironmentRequest"
+          },
+          "state": {
+            "pattern": "^(accepted|denied)$",
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request",
+          "outcome",
+          "state",
+          "idempotency_key"
+        ],
+        "title": "EnvironmentRequestRecord",
+        "type": "object"
+      },
+      "EnvironmentType": {
+        "enum": [
+          "development",
+          "test",
+          "production"
+        ],
+        "title": "EnvironmentType",
+        "type": "string"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "InstallationCreateBody": {
+        "additionalProperties": false,
+        "properties": {
+          "guardrails": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InstallationGuardrails-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "installation_id": {
+            "default": "default",
+            "minLength": 1,
+            "title": "Installation Id",
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/InstallationMode",
+            "default": "simulation"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/CloudProvider"
+          }
+        },
+        "required": [
+          "provider"
+        ],
+        "title": "InstallationCreateBody",
+        "type": "object"
+      },
+      "InstallationGuardrails-Input": {
+        "additionalProperties": false,
+        "description": "Common limits applied before a provider adapter is consulted.",
+        "properties": {
+          "allowed_cluster_sizes": {
+            "default": [
+              "small",
+              "medium",
+              "large"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ClusterSize"
+            },
+            "title": "Allowed Cluster Sizes",
+            "type": "array"
+          },
+          "allowed_regions": {
+            "default": [
+              "example-region"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "title": "Allowed Regions",
+            "type": "array"
+          },
+          "budget_maximum": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "default": "1000.00",
+            "title": "Budget Maximum"
+          },
+          "max_nonproduction_lifetime_days": {
+            "default": 30,
+            "maximum": 3650.0,
+            "minimum": 1.0,
+            "title": "Max Nonproduction Lifetime Days",
+            "type": "integer"
+          }
+        },
+        "title": "InstallationGuardrails",
+        "type": "object"
+      },
+      "InstallationGuardrails-Output": {
+        "additionalProperties": false,
+        "description": "Common limits applied before a provider adapter is consulted.",
+        "properties": {
+          "allowed_cluster_sizes": {
+            "default": [
+              "small",
+              "medium",
+              "large"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ClusterSize"
+            },
+            "title": "Allowed Cluster Sizes",
+            "type": "array"
+          },
+          "allowed_regions": {
+            "default": [
+              "example-region"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "title": "Allowed Regions",
+            "type": "array"
+          },
+          "budget_maximum": {
+            "default": "1000.00",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Budget Maximum",
+            "type": "string"
+          },
+          "max_nonproduction_lifetime_days": {
+            "default": 30,
+            "maximum": 3650.0,
+            "minimum": 1.0,
+            "title": "Max Nonproduction Lifetime Days",
+            "type": "integer"
+          }
+        },
+        "title": "InstallationGuardrails",
+        "type": "object"
+      },
+      "InstallationMode": {
+        "enum": [
+          "simulation",
+          "sandbox",
+          "enterprise"
+        ],
+        "title": "InstallationMode",
+        "type": "string"
+      },
+      "InstallationProfile": {
+        "additionalProperties": false,
+        "description": "Provider and lifecycle configuration for one installation.",
+        "properties": {
+          "guardrails": {
+            "$ref": "#/components/schemas/InstallationGuardrails-Output"
+          },
+          "installation_id": {
+            "minLength": 1,
+            "title": "Installation Id",
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/InstallationMode",
+            "default": "simulation"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CloudProvider"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "$ref": "#/components/schemas/InstallationStatus",
+            "default": "draft"
+          }
+        },
+        "required": [
+          "installation_id"
+        ],
+        "title": "InstallationProfile",
+        "type": "object"
+      },
+      "InstallationResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "installation": {
+            "$ref": "#/components/schemas/InstallationProfile"
+          },
+          "validation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InstallationValidation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "installation"
+        ],
+        "title": "InstallationResponse",
+        "type": "object"
+      },
+      "InstallationStatus": {
+        "enum": [
+          "draft",
+          "active",
+          "retired"
+        ],
+        "title": "InstallationStatus",
+        "type": "string"
+      },
+      "InstallationValidation": {
+        "additionalProperties": false,
+        "properties": {
+          "allowed": {
+            "title": "Allowed",
+            "type": "boolean"
+          },
+          "violations": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PolicyViolation"
+            },
+            "title": "Violations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "allowed"
+        ],
+        "title": "InstallationValidation",
+        "type": "object"
+      },
+      "ModeDescriptor": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "execution": {
+            "title": "Execution",
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/InstallationMode"
+          }
+        },
+        "required": [
+          "mode",
+          "display_name",
+          "description",
+          "execution"
+        ],
+        "title": "ModeDescriptor",
+        "type": "object"
+      },
+      "ModeListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "modes": {
+            "items": {
+              "$ref": "#/components/schemas/ModeDescriptor"
+            },
+            "title": "Modes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "modes"
+        ],
+        "title": "ModeListResponse",
+        "type": "object"
+      },
+      "PolicyDecision": {
+        "additionalProperties": false,
+        "description": "Deterministic aggregate policy result.",
+        "properties": {
+          "allowed": {
+            "title": "Allowed",
+            "type": "boolean"
+          },
+          "violations": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PolicyViolation"
+            },
+            "title": "Violations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "allowed"
+        ],
+        "title": "PolicyDecision",
+        "type": "object"
+      },
+      "PolicyViolation": {
+        "additionalProperties": false,
+        "description": "Stable, user-facing explanation of one failed policy.",
+        "properties": {
+          "code": {
+            "minLength": 1,
+            "title": "Code",
+            "type": "string"
+          },
+          "field": {
+            "minLength": 1,
+            "title": "Field",
+            "type": "string"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "field"
+        ],
+        "title": "PolicyViolation",
+        "type": "object"
+      },
+      "ProviderDescriptor": {
+        "additionalProperties": false,
+        "properties": {
+          "available": {
+            "default": true,
+            "title": "Available",
+            "type": "boolean"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/CloudProvider"
+          }
+        },
+        "required": [
+          "provider",
+          "display_name",
+          "description"
+        ],
+        "title": "ProviderDescriptor",
+        "type": "object"
+      },
+      "ProviderListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "providers": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderDescriptor"
+            },
+            "title": "Providers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "providers"
+        ],
+        "title": "ProviderListResponse",
+        "type": "object"
+      },
+      "RequestListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "requests": {
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentRequestRecord"
+            },
+            "title": "Requests",
+            "type": "array"
+          }
+        },
+        "required": [
+          "requests"
+        ],
+        "title": "RequestListResponse",
+        "type": "object"
+      },
+      "ResolvedEnvironmentRequest": {
+        "additionalProperties": false,
+        "description": "Normalized request with the provider resolved from the profile.",
+        "properties": {
+          "application": {
+            "minLength": 1,
+            "title": "Application",
+            "type": "string"
+          },
+          "business_justification": {
+            "minLength": 1,
+            "title": "Business Justification",
+            "type": "string"
+          },
+          "canonical_json": {
+            "minLength": 1,
+            "title": "Canonical Json",
+            "type": "string"
+          },
+          "cluster_size": {
+            "$ref": "#/components/schemas/ClusterSize"
+          },
+          "cost_centre": {
+            "minLength": 1,
+            "title": "Cost Centre",
+            "type": "string"
+          },
+          "data_classification": {
+            "$ref": "#/components/schemas/DataClassification"
+          },
+          "environment": {
+            "$ref": "#/components/schemas/EnvironmentType"
+          },
+          "fingerprint": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Fingerprint",
+            "type": "string"
+          },
+          "monthly_budget": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Monthly Budget",
+            "type": "string"
+          },
+          "network_cidr": {
+            "format": "ipvanynetwork",
+            "title": "Network Cidr",
+            "type": "string"
+          },
+          "non_production_expiry": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Non Production Expiry"
+          },
+          "owner": {
+            "minLength": 1,
+            "title": "Owner",
+            "type": "string"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/CloudProvider"
+          },
+          "region": {
+            "minLength": 1,
+            "title": "Region",
+            "type": "string"
+          },
+          "request_id": {
+            "pattern": "^env-[0-9a-f]{16}$",
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "application",
+          "environment",
+          "owner",
+          "cost_centre",
+          "data_classification",
+          "region",
+          "network_cidr",
+          "cluster_size",
+          "monthly_budget",
+          "business_justification",
+          "provider",
+          "canonical_json",
+          "fingerprint",
+          "request_id"
+        ],
+        "title": "ResolvedEnvironmentRequest",
+        "type": "object"
+      },
+      "SimulationOutcome": {
+        "additionalProperties": false,
+        "description": "Policy decision plus optional deterministic simulation result.",
+        "properties": {
+          "decision": {
+            "$ref": "#/components/schemas/PolicyDecision"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SimulationResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "title": "SimulationOutcome",
+        "type": "object"
+      },
+      "SimulationResource": {
+        "additionalProperties": false,
+        "description": "Stable description of a resource that would be proposed.",
+        "properties": {
+          "attributes": {
+            "default": [],
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Attributes",
+            "type": "array"
+          },
+          "kind": {
+            "minLength": 1,
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "name"
+        ],
+        "title": "SimulationResource",
+        "type": "object"
+      },
+      "SimulationResult": {
+        "additionalProperties": false,
+        "description": "Credential-free simulation output.",
+        "properties": {
+          "fingerprint": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Fingerprint",
+            "type": "string"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/CloudProvider"
+          },
+          "request_id": {
+            "pattern": "^env-[0-9a-f]{16}$",
+            "title": "Request Id",
+            "type": "string"
+          },
+          "resources": {
+            "items": {
+              "$ref": "#/components/schemas/SimulationResource"
+            },
+            "title": "Resources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provider",
+          "request_id",
+          "fingerprint",
+          "resources"
+        ],
+        "title": "SimulationResult",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Credential-free simulation interfaces for a provider-locked self-service cloud platform.",
+    "title": "Secure Self-Service Cloud Platform",
+    "version": "0.5.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Health Health Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/metrics": {
+      "get": {
+        "operationId": "metrics_metrics_get",
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Metrics"
+      }
+    },
+    "/v1/environment-requests": {
+      "get": {
+        "operationId": "list_environment_requests_v1_environment_requests_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Environment Requests"
+      },
+      "post": {
+        "operationId": "create_environment_request_v1_environment_requests_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnvironmentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentRequestRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Environment Request"
+      }
+    },
+    "/v1/environment-requests/{request_id}": {
+      "get": {
+        "operationId": "get_environment_request_v1_environment_requests__request_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentRequestRecord"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Environment Request"
+      }
+    },
+    "/v1/platform/installation": {
+      "get": {
+        "operationId": "get_installation_v1_platform_installation_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstallationProfile"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Installation"
+      }
+    },
+    "/v1/platform/installation/validate": {
+      "post": {
+        "operationId": "validate_installation_v1_platform_installation_validate_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstallationValidation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Validate Installation"
+      }
+    },
+    "/v1/platform/installations": {
+      "post": {
+        "operationId": "create_installation_v1_platform_installations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationCreateBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstallationResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Installation"
+      }
+    },
+    "/v1/platform/modes": {
+      "get": {
+        "operationId": "modes_v1_platform_modes_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModeListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Modes"
+      }
+    },
+    "/v1/platform/providers": {
+      "get": {
+        "operationId": "providers_v1_platform_providers_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Providers"
+      }
+    },
+    "/version": {
+      "get": {
+        "operationId": "app_version_version_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response App Version Version Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "App Version"
+      }
+    }
+  }
+}

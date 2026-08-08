@@ -64,6 +64,14 @@ CLI ------------------/    Provider adapter          protected deployment
 Detailed component, sequence, provider topology, identity, state, logging,
 threat, and incident diagrams will be added alongside their implementations.
 
+## Shared interface flow
+
+The [interface flow](diagrams/rendered/interface-flow.svg) shows the implemented
+Milestone 5 boundary. The React portal calls FastAPI through its generated
+OpenAPI client, while the Typer CLI calls the same application service
+directly. Both paths reach the same normalization, policy, provider routing,
+and deterministic result contracts. Neither path can apply infrastructure.
+
 ## First rendered views
 
 The [system context diagram](diagrams/rendered/system-context.svg) shows the

@@ -25,14 +25,21 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Simulation quickstart: simulation-quickstart.md
   - Product overview: product-overview.md
   - Architecture: architecture.md
   - Domain model and contracts: domain-model.md
+  - Shared interfaces: interfaces.md
   - Provider selection: provider-selection.md
+  - Providers:
+      - AWS simulation: providers/aws.md
+      - Azure simulation: providers/azure.md
   - Diagrams: diagrams/README.md
   - Decisions:
       - Overview: decisions/README.md
       - One provider per installation: decisions/ADR-001-one-provider-per-installation.md
       - Provider-neutral domain and adapter ports: decisions/ADR-002-provider-neutral-domain-and-adapter-ports.md
+      - Credential-free provider simulations: decisions/ADR-003-credential-free-provider-simulations.md
+      - One service for every interface: decisions/ADR-004-one-service-for-api-cli-and-portal.md
 
 strict: true

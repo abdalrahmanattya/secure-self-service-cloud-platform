@@ -7,13 +7,14 @@ Microsoft Azure.
 An administrator selects exactly one cloud provider when installing the
 platform. Developers then use a web portal, REST API, or CLI to submit a small
 environment request. The platform validates the request, evaluates governance
-policies, generates deterministic Terraform inputs, and creates an auditable
-GitHub proposal. Real infrastructure changes remain behind protected planning
-and approval workflows.
+policies, and returns a deterministic provider simulation through all three
+interfaces. Real infrastructure changes are not part of the current demo.
 
-> **Project status:** Milestone 2 common domain contracts and credential-free
-> simulation orchestration are implemented. Provider-specific adapters and
-> user interfaces are planned next.
+> **Project status:** Milestones 3–5 are complete. The repository now includes
+> deterministic AWS and Azure simulation adapters, a shared FastAPI and CLI
+> service, and a React portal. The implementation remains credential-free and
+> simulation-only; proposal generation, Terraform execution, cloud bootstrap,
+> and deployment are future work.
 
 ## The problem
 
@@ -34,10 +35,7 @@ Portal / API / CLI
 Validation + policy
       |
       v
-Deterministic Terraform proposal
-      |
-      v
-GitHub review and protected deployment
+Deterministic provider simulation
       |
       +----> AWS installation
       |
@@ -47,17 +45,26 @@ GitHub review and protected deployment
 The software supports both providers, but one installation manages only its
 selected provider. It is not a hybrid-cloud deployment system.
 
-## Planned capabilities
+## Implemented in Milestones 3–5
 
-- Accessible React and TypeScript administration portal
-- FastAPI service and automation-friendly CLI
-- Simulation, single-account/subscription sandbox, and enterprise modes
-- Separate provider-native Terraform implementations for AWS and Azure
-- Common and provider-specific OPA policy checks
-- Private EKS or AKS clusters with central security and observability controls
-- GitHub OIDC with short-lived cloud credentials
-- Reviewed plan, approval, rollback, drift, and cleanup workflows
-- Searchable architecture, security, cost, API, and operations documentation
+- Deterministic AWS simulation for VPC/private networking, EKS 1.36, IAM/IRSA,
+  KMS, secrets, logging, detection, and budgets.
+- Deterministic Azure simulation for VNet/private networking, private AKS 1.36
+  with Azure CNI, Entra RBAC and Workload Identity, Key Vault, monitoring,
+  Policy, Defender, private endpoints, and budgets.
+- One provider-locked installation and one shared `PlatformService` used by
+  the FastAPI API and Typer CLI.
+- FastAPI routes for local health, installation readiness, provider/mode
+  discovery, and idempotent environment request evaluation.
+- A React, TypeScript, Material UI portal with setup, dashboard, request,
+  policy feedback, and readiness views.
+- Stable request IDs, fingerprints, policy violations, and simulation resource
+  descriptions across API, CLI, and portal paths.
+
+The sandbox and enterprise modes are configuration descriptions only. They do
+not execute requests in this demo. GitHub proposals, Terraform modules and
+plans, apply/destroy workflows, cloud bootstrap, OIDC deployment identities,
+and real provider operations are not implemented.
 
 ## Safety boundary
 
@@ -71,10 +78,13 @@ or real deployment configuration.
 
 ## Documentation
 
-Start with the [documentation index](docs/index.md), then review the
+Start with the [local simulation quickstart](docs/simulation-quickstart.md) and
+[documentation index](docs/index.md), then review the
 [architecture](docs/architecture.md) and the decision to
 [select one provider per installation](docs/decisions/ADR-001-one-provider-per-installation.md),
-then explore the [domain model and contracts](docs/domain-model.md).
+then explore the [shared interfaces](docs/interfaces.md),
+[provider adapters](docs/providers/aws.md), and
+[domain model and contracts](docs/domain-model.md).
 
 ## License
 

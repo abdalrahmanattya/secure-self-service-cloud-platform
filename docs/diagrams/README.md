@@ -23,6 +23,7 @@ timelines.
 | --- | --- | --- | --- |
 | System context | People submit requests or configure the platform; GitHub reviews the deterministic proposal; exactly one optional cloud destination receives an approved deployment. | [`system-context.mmd`](src/system-context.mmd) | [`system-context.svg`](rendered/system-context.svg) |
 | Provider selection | An installation moves from unconfigured to a selected provider and mode, then locks the provider after activation; mismatched requests are rejected. | [`provider-selection.mmd`](src/provider-selection.mmd) | [`provider-selection.svg`](rendered/provider-selection.svg) |
+| Interface flow | The portal, API, and CLI converge on one application service and route to only the installation's selected simulation adapter. | [`interface-flow.mmd`](src/interface-flow.mmd) | [`interface-flow.svg`](rendered/interface-flow.svg) |
 
 The SVG links above are the accessible, committed renderings for readers who
 do not have Mermaid installed. The source comments and surrounding prose state

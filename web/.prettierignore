@@ -1,0 +1,4 @@
+openapi.json
+src/api/generated.ts
+dist/
+coverage/
