@@ -4,19 +4,36 @@ build-backend = "hatchling.build"
 
 [project]
 name = "secure-self-service-cloud-platform"
-version = "0.2.0"
-description = "Provider-neutral contracts for a secure self-service cloud platform"
+version = "0.5.0"
+description = "Credential-free AWS and Azure self-service platform simulation"
 readme = "README.md"
 requires-python = ">=3.13,<3.15"
 license = { file = "LICENSE" }
 authors = [{ name = "Abdalrahman Attya" }]
-dependencies = ["pydantic==2.13.4"]
+dependencies = [
+    "fastapi==0.139.2",
+    "pydantic==2.13.4",
+    "PyYAML==6.0.3",
+    "typer==0.27.0",
+    "uvicorn==0.49.0",
+]
+
+[project.scripts]
+platform = "secure_cloud_platform.cli:app"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/secure_cloud_platform"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/secure_cloud_platform", "tests", "README.md", "LICENSE"]
+include = [
+    "src/secure_cloud_platform",
+    "tests",
+    "docs",
+    "scripts",
+    "web",
+    "README.md",
+    "LICENSE",
+]
 
 [tool.pytest.ini_options]
 addopts = "--strict-config --strict-markers"

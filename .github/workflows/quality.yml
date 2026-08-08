@@ -1,4 +1,4 @@
-name: Documentation quality
+name: Quality
 
 on:
   pull_request:
@@ -26,7 +26,9 @@ jobs:
         with:
           node-version: '22.14.0'
           cache: npm
-          cache-dependency-path: tools/diagrams/package-lock.json
+          cache-dependency-path: |
+            tools/diagrams/package-lock.json
+            web/package-lock.json
 
       - name: Install documentation dependencies
         run: python -m pip install --requirement requirements/docs.txt
@@ -45,6 +47,27 @@ jobs:
 
       - name: Test Python
         run: python -m pytest
+
+      - name: Export OpenAPI contract
+        run: python scripts/export-openapi.py
+
+      - name: Install portal dependencies
+        run: npm ci --prefix web
+
+      - name: Generate portal API types
+        run: npm run generate:api --prefix web
+
+      - name: Verify generated interface contract
+        run: git diff --exit-code -- web/openapi.json web/src/api/generated.ts
+
+      - name: Check portal
+        run: npm run check --prefix web
+
+      - name: Build portal
+        run: npm run build --prefix web
+
+      - name: Audit portal dependencies
+        run: npm audit --prefix web --audit-level=high
 
       - name: Install diagram dependencies
         run: npm ci --prefix tools/diagrams

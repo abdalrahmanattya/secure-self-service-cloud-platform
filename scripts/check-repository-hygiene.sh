@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-tracked_generated=$(git ls-files | grep -E '(^|/)([^/]+\.tfstate([.][^/]*)?|[^/]+\.tfplan|\.terraform/|node_modules/|site/)' || true)
+tracked_generated=$(git ls-files | grep -E '(^|/)([^/]+\.tfstate([.][^/]*)?|[^/]+\.tfplan|\.terraform/|node_modules/|site/|dist/|coverage/)' || true)
 if [ -n "$tracked_generated" ]; then
   printf '%s\n' "generated or sensitive infrastructure artifact is tracked:" >&2
   printf '%s\n' "$tracked_generated" >&2
@@ -12,6 +12,13 @@ tracked_private_variables=$(git ls-files | grep -E '(^|/)[^/]+\.tfvars(\.json)?$
 if [ -n "$tracked_private_variables" ]; then
   printf '%s\n' "private Terraform variable file is tracked:" >&2
   printf '%s\n' "$tracked_private_variables" >&2
+  exit 1
+fi
+
+tracked_local_context=$(git ls-files 'AGENTS.md' '.local-context/**')
+if [ -n "$tracked_local_context" ]; then
+  printf '%s\n' 'local collaboration context is tracked:' >&2
+  printf '%s\n' "$tracked_local_context" >&2
   exit 1
 fi
 

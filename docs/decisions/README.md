@@ -8,3 +8,5 @@ the implementation.
 
 - [ADR-001: Select one cloud provider per installation](ADR-001-one-provider-per-installation.md)
 - [ADR-002: Keep the domain provider-neutral and expose adapter ports](ADR-002-provider-neutral-domain-and-adapter-ports.md)
+- [ADR-003: Model provider designs without contacting cloud APIs](ADR-003-credential-free-provider-simulations.md)
+- [ADR-004: Use one application service for every user interface](ADR-004-one-service-for-api-cli-and-portal.md)

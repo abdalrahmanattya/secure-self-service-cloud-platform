@@ -1,0 +1,40 @@
+flowchart LR
+    admin[Platform administrator]
+    developer[Application developer]
+
+    subgraph interfaces[Equivalent interfaces]
+        portal[React portal]
+        api[FastAPI API]
+        cli[Typer CLI]
+    end
+
+    service[Shared application service]
+    domain[Common domain and policy]
+    installation[(Provider-locked installation)]
+    aws[AWS simulation adapter]
+    azure[Azure simulation adapter]
+    result[Deterministic request result]
+
+    admin -->|select provider and mode| portal
+    developer -->|guided request| portal
+    developer -->|REST request| api
+    developer -->|local command| cli
+    portal -->|OpenAPI client| api
+    api --> service
+    cli --> service
+    service --> installation
+    service --> domain
+    domain -->|AWS selected| aws
+    domain -->|Azure selected| azure
+    aws --> result
+    azure --> result
+
+    classDef actor fill:#fff7e6,stroke:#9a6700,color:#332200
+    classDef interface fill:#e6f4ff,stroke:#0969da,color:#002155
+    classDef core fill:#dafbe1,stroke:#1a7f37,color:#003d16
+    classDef provider fill:#f6f8fa,stroke:#57606a,color:#24292f
+
+    class admin,developer actor
+    class portal,api,cli interface
+    class service,domain,installation,result core
+    class aws,azure provider
