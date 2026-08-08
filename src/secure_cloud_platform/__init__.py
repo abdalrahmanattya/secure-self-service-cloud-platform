@@ -12,7 +12,6 @@ from .errors import (
     InvalidLifecycleTransitionError,
     MissingProviderAdapterError,
     ProviderLockedError,
-    SimulationModeRequiredError,
 )
 from .models import (
     CloudProvider,
@@ -35,14 +34,26 @@ from .models import (
 from .normalization import normalize_request
 from .orchestrator import SimulationOrchestrator
 from .policies import evaluate_common_policies, merge_decisions
+from .proposals import (
+    BUNDLE_MARKER_FILENAME,
+    PROPOSAL_SCHEMA_VERSION,
+    DeploymentProposal,
+    ProposalArtifact,
+    ProposalBundleMarker,
+    ProposalInputError,
+    ProposalState,
+    build_deployment_proposal,
+)
 
 __all__ = [
     "AWSProviderAdapter",
     "AdapterProviderMismatchError",
     "AzureProviderAdapter",
+    "BUNDLE_MARKER_FILENAME",
     "CloudProvider",
     "ClusterSize",
     "DataClassification",
+    "DeploymentProposal",
     "DomainError",
     "EnvironmentRequest",
     "EnvironmentType",
@@ -55,15 +66,20 @@ __all__ = [
     "MissingProviderAdapterError",
     "PolicyDecision",
     "PolicyViolation",
+    "PROPOSAL_SCHEMA_VERSION",
     "ProviderAdapter",
     "ProviderLockedError",
     "ProviderValidation",
+    "ProposalArtifact",
+    "ProposalBundleMarker",
+    "ProposalInputError",
+    "ProposalState",
     "ResolvedEnvironmentRequest",
-    "SimulationModeRequiredError",
     "SimulationOrchestrator",
     "SimulationOutcome",
     "SimulationResource",
     "SimulationResult",
+    "build_deployment_proposal",
     "evaluate_common_policies",
     "merge_decisions",
     "normalize_request",

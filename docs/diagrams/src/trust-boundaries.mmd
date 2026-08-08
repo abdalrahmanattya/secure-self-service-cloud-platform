@@ -1,0 +1,28 @@
+flowchart LR
+    subgraph USER[User zone]
+        developer[Developer]
+        admin[Administrator]
+    end
+    subgraph APP[Application zone]
+        portal[Portal]
+        api[API and service]
+        policy[Policy]
+    end
+    subgraph GITHUB[Review zone]
+        pr[Pull request and checks]
+        env[Protected Environment]
+        oidc[OIDC token exchange]
+    end
+    subgraph CLOUD[Selected provider zone]
+        resources[Private network and Kubernetes]
+        state[(Encrypted state)]
+    end
+    developer --> portal --> api --> policy --> pr
+    admin --> api
+    pr --> env --> oidc --> resources
+    resources --> state
+    attacker[Threat paths]
+    attacker -. request manipulation .-> api
+    attacker -. workflow/token abuse .-> env
+    attacker -. drift or state tampering .-> state
+    api -. no direct cloud credentials .-> resources

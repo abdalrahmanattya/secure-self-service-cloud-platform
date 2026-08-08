@@ -37,14 +37,14 @@ internally consistent, violations are sorted by code, field, and message with
 exact duplicates removed, and simulation resources are sorted deterministically.
 
 Provider SDKs, Terraform modules, credentials, account/subscription IDs, and
-network calls belong in later provider-specific layers. They must not be
+network calls belong in separate provider-specific layers. They must not be
 required to import or test the common domain.
 
 ## Consequences
 
 Positive consequences:
 
-- Every future interface can share one validated request and one explanation
+- Every interface can share one validated request and one explanation
   of policy failures.
 - Provider lock and request fingerprints make installation ownership explicit.
 - Both provider routes can be tested credential-free with fake adapters.
@@ -56,7 +56,7 @@ Trade-offs:
 - Provider-specific capability differences need a separate adapter validation
   result rather than being added to common models.
 - The neutral model cannot express every provider feature; provider-native
-  configuration must be introduced behind an explicit boundary later.
+  configuration stays behind the implemented Terraform/workflow boundary.
 - Adapter registration needs explicit mismatch and missing-adapter checks.
 
 ## Rejected alternatives

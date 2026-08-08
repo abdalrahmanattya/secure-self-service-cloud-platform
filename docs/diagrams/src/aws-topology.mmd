@@ -1,0 +1,30 @@
+flowchart TB
+    operator[Platform operator]
+    github[GitHub Environment
+required reviewers and concurrency]
+    aws_oidc[AWS IAM OIDC role
+aud sts.amazonaws.com
+exact repo/environment subject]
+    subgraph AWS[AWS installation]
+        mgmt[Management account]
+        security[Security account]
+        archive[Log archive account]
+        network[Network account]
+        shared[Shared services account]
+        subgraph sandbox[Sandbox account]
+            vpc[VPC private subnets]
+            eks[EKS private API and nodes]
+            controls[KMS, CloudTrail, GuardDuty, Budgets]
+        end
+        subgraph enterprise[Enterprise environment accounts]
+            dev[Development]
+            test[Test]
+            prod[Production]
+        end
+    end
+    operator --> github --> aws_oidc --> AWS
+    security --> archive
+    network --> shared
+    network --> sandbox
+    network --> enterprise
+    vpc --> eks --> controls

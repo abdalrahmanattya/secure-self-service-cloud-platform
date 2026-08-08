@@ -1,0 +1,36 @@
+flowchart LR
+    subgraph UX[User interfaces]
+        portal[React portal]
+        api[FastAPI API]
+        cli[Typer CLI]
+    end
+    subgraph APP[Application boundary]
+        service[Platform service]
+        normalize[Normalize and identity]
+        policy[Common and provider policy]
+        records[Request and proposal records]
+    end
+    subgraph PROVIDER[Provider boundary]
+        aws[AWS adapter and modules]
+        azure[Azure adapter and modules]
+        state[(Provider state backend)]
+    end
+    subgraph REVIEW[Review and deployment boundary]
+        bundle[Materialized proposal bundle]
+        github[Manual GitHub validation and protected workflows]
+        oidc[Short-lived OIDC identity]
+        protected[Protected Environment]
+    end
+    portal --> api
+    api --> service
+    cli --> service
+    service --> normalize --> policy --> records
+    records --> bundle
+    bundle -. operator publishes exact inputs .-> github
+    service --> aws
+    service --> azure
+    github --> protected --> oidc
+    oidc -. approved workflow only .-> aws
+    oidc -. approved workflow only .-> azure
+    aws --> state
+    azure --> state

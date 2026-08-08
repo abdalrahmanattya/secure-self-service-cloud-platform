@@ -1,0 +1,14 @@
+{
+  "artifact_paths": [
+    "environments/policies/env-0123456789abcdef.md",
+    "environments/proposals/proposal-0123456789abcdef.json",
+    "environments/proposals/proposal-0123456789abcdef.md",
+    "environments/requests/env-0123456789abcdef.json",
+    "environments/requests/env-0123456789abcdef.yaml",
+    "environments/terraform/aws/env-0123456789abcdef.json",
+    "infrastructure/terraform/aws/env-0123456789abcdef.auto.tfvars.json"
+  ],
+  "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "proposal_id": "proposal-0123456789abcdef",
+  "schema_version": "proposal.v1"
+}

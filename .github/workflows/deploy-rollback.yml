@@ -1,0 +1,101 @@
+name: Protected deployment rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha: {description: Exact 40-character commit SHA, required: true, type: string}
+      provider: {description: Provider, required: true, type: choice, options: [aws, azure]}
+      mode: {description: Installation mode, required: true, type: choice, options: [sandbox, enterprise]}
+      request_id: {description: Environment request ID, required: true, type: string}
+      proposal_id: {description: Approved rollback proposal ID, required: true, type: string}
+      proposal_sha256: {description: SHA-256 of nested proposal identity JSON, required: true, type: string}
+      tfvars_sha256: {description: SHA-256 of provider/request tfvars JSON, required: true, type: string}
+      plan_sha256: {description: SHA-256 of the reviewed rollback plan, required: true, type: string}
+      plan_run_id: {description: Workflow run containing the reviewed plan, required: true, type: string}
+      confirmation: {description: Type ROLLBACK provider/mode/proposal-id, required: true, type: string}
+      reviewer: {description: Independent reviewer identity, required: true, type: string}
+      requester: {description: Requester identity, required: true, type: string}
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
+concurrency:
+  group: protected-${{ inputs.provider }}-${{ inputs.mode }}-rollback
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    if: vars.REAL_DEPLOYMENT_ENABLED == 'true' && github.event.repository.private == true && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && inputs.confirmation == format('ROLLBACK {0}/{1}/{2}', inputs.provider, inputs.mode, inputs.proposal_id) && inputs.reviewer != inputs.requester && inputs.reviewer != github.actor
+    runs-on: ubuntu-24.04
+    # Rollback uses the separately reviewed apply identity; the environment
+    # name must match its exact federated subject.
+    environment: platform-apply
+    env:
+      TF_PROVIDER: ${{ inputs.provider }}
+      TF_MODE: ${{ inputs.mode }}
+      REQUEST_ID: ${{ inputs.request_id }}
+      PROPOSAL_ID: ${{ inputs.proposal_id }}
+      PROPOSAL_SHA256: ${{ inputs.proposal_sha256 }}
+      TFVARS_SHA256: ${{ inputs.tfvars_sha256 }}
+      PLAN_SHA256: ${{ inputs.plan_sha256 }}
+      PROPOSAL_BUNDLE_DIR: ${{ github.workspace }}/.protected-plan/bundle
+      PROPOSAL_FILE: ${{ github.workspace }}/.protected-plan/bundle/environments/proposals/${{ inputs.proposal_id }}.json
+      TFVARS_FILE: ${{ github.workspace }}/.protected-plan/bundle/infrastructure/terraform/${{ inputs.provider }}/${{ inputs.request_id }}.auto.tfvars.json
+      TF_PLAN_FILE: ${{ github.workspace }}/.protected-plan/tfplan
+      TF_VAR_tenant_id: ${{ vars.AZURE_TENANT_ID }}
+      TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      TF_BACKEND_BUCKET: ${{ vars.AWS_TF_STATE_BUCKET }}
+      TF_BACKEND_REGION: ${{ vars.AWS_TF_STATE_REGION }}
+      TF_BACKEND_RESOURCE_GROUP: ${{ vars.AZURE_TF_STATE_RESOURCE_GROUP }}
+      TF_BACKEND_STORAGE_ACCOUNT: ${{ vars.AZURE_TF_STATE_STORAGE_ACCOUNT }}
+      TF_BACKEND_CONTAINER: ${{ vars.AZURE_TF_STATE_CONTAINER }}
+      REVIEWER: ${{ inputs.reviewer }}
+      REQUESTER: ${{ inputs.requester }}
+      COMMIT_SHA: ${{ inputs.commit_sha }}
+      GITHUB_ACTOR: ${{ github.actor }}
+      GITHUB_SHA: ${{ github.sha }}
+      LIFECYCLE_CONFIRMATION: ${{ inputs.confirmation }}
+      PROTECTED_OPERATION: rollback
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.commit_sha }}
+      - name: Install exact Terraform CLI
+        run: scripts/install-terraform.sh "${RUNNER_TEMP}/terraform"
+      - name: Add verified CLI to PATH
+        run: echo "${RUNNER_TEMP}" >> "${GITHUB_PATH}"
+      - name: Verify typed approval inputs
+        run: scripts/verify-protected-inputs.sh
+      - name: Download exact reviewed plan artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: plan-${{ inputs.proposal_id }}
+          path: .protected-plan
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.plan_run_id }}
+      - name: Verify reviewed plan and binding hashes
+        run: |
+          echo "${PLAN_SHA256}  ${TF_PLAN_FILE}" | sha256sum --check -
+          echo "${PROPOSAL_SHA256}  ${PROPOSAL_FILE}" | sha256sum --check -
+          echo "${TFVARS_SHA256}  ${TFVARS_FILE}" | sha256sum --check -
+      - name: Authenticate AWS with protected OIDC role
+        if: inputs.provider == 'aws'
+        env:
+          OIDC_PROVIDER: aws
+          OIDC_AUDIENCE: sts.amazonaws.com
+          OIDC_ROLE_ARN: ${{ vars.AWS_APPLY_ROLE_ARN }}
+        run: scripts/authenticate-oidc.sh
+      - name: Authenticate Azure with protected OIDC identity
+        if: inputs.provider == 'azure'
+        env:
+          OIDC_PROVIDER: azure
+          OIDC_AUDIENCE: api://AzureADTokenExchange
+          AZURE_CLIENT_ID: ${{ vars.AZURE_APPLY_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+        run: scripts/authenticate-oidc.sh
+      - name: Apply the exact rollback plan from the selected provider root
+        run: scripts/terraform-lifecycle.sh

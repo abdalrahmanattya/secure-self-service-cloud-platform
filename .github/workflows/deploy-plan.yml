@@ -1,0 +1,110 @@
+name: Protected deployment plan
+
+# Saved Terraform plans can contain sensitive values. Real deployment is
+# intentionally restricted to private repositories and protected environments.
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha: {description: Exact 40-character commit SHA, required: true, type: string}
+      provider: {description: Provider, required: true, type: choice, options: [aws, azure]}
+      mode: {description: Installation mode, required: true, type: choice, options: [sandbox, enterprise]}
+      request_id: {description: Environment request ID, required: true, type: string}
+      proposal_id: {description: Approved proposal ID, required: true, type: string}
+      proposal_run_id: {description: Proposal validation workflow run ID, required: true, type: string}
+      proposal_sha256: {description: SHA-256 of nested proposal identity JSON, required: true, type: string}
+      tfvars_sha256: {description: SHA-256 of provider/request tfvars JSON, required: true, type: string}
+      reviewer: {description: Independent reviewer identity, required: true, type: string}
+      requester: {description: Requester identity, required: true, type: string}
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
+concurrency:
+  group: protected-${{ inputs.provider }}-${{ inputs.mode }}-plan
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    if: vars.REAL_DEPLOYMENT_ENABLED == 'true' && github.event.repository.private == true && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && inputs.reviewer != inputs.requester && inputs.reviewer != github.actor
+    runs-on: ubuntu-24.04
+    environment: platform-plan
+    env:
+      TF_PROVIDER: ${{ inputs.provider }}
+      TF_MODE: ${{ inputs.mode }}
+      REQUEST_ID: ${{ inputs.request_id }}
+      PROPOSAL_ID: ${{ inputs.proposal_id }}
+      PROPOSAL_SHA256: ${{ inputs.proposal_sha256 }}
+      TFVARS_SHA256: ${{ inputs.tfvars_sha256 }}
+      PROPOSAL_BUNDLE_DIR: ${{ github.workspace }}/.protected-inputs/bundle
+      PROPOSAL_FILE: ${{ github.workspace }}/.protected-inputs/bundle/environments/proposals/${{ inputs.proposal_id }}.json
+      TFVARS_FILE: ${{ github.workspace }}/.protected-inputs/bundle/infrastructure/terraform/${{ inputs.provider }}/${{ inputs.request_id }}.auto.tfvars.json
+      PLAN_PROPOSAL_FILE: ${{ github.workspace }}/.protected-inputs/bundle/environments/proposals/${{ inputs.proposal_id }}.json
+      PLAN_TFVARS_FILE: ${{ github.workspace }}/.protected-inputs/bundle/infrastructure/terraform/${{ inputs.provider }}/${{ inputs.request_id }}.auto.tfvars.json
+      TF_PLAN_FILE: ${{ github.workspace }}/tfplan
+      TF_VAR_tenant_id: ${{ vars.AZURE_TENANT_ID }}
+      TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      TF_BACKEND_BUCKET: ${{ vars.AWS_TF_STATE_BUCKET }}
+      TF_BACKEND_REGION: ${{ vars.AWS_TF_STATE_REGION }}
+      TF_BACKEND_RESOURCE_GROUP: ${{ vars.AZURE_TF_STATE_RESOURCE_GROUP }}
+      TF_BACKEND_STORAGE_ACCOUNT: ${{ vars.AZURE_TF_STATE_STORAGE_ACCOUNT }}
+      TF_BACKEND_CONTAINER: ${{ vars.AZURE_TF_STATE_CONTAINER }}
+      REVIEWER: ${{ inputs.reviewer }}
+      REQUESTER: ${{ inputs.requester }}
+      COMMIT_SHA: ${{ inputs.commit_sha }}
+      GITHUB_ACTOR: ${{ github.actor }}
+      GITHUB_SHA: ${{ github.sha }}
+      PROTECTED_OPERATION: plan
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.commit_sha }}
+      - name: Install exact Terraform CLI
+        run: scripts/install-terraform.sh "${RUNNER_TEMP}/terraform"
+      - name: Add verified CLI to PATH
+        run: echo "${RUNNER_TEMP}" >> "${GITHUB_PATH}"
+      - name: Verify typed approval and binding inputs
+        run: scripts/verify-protected-inputs.sh
+      - name: Download exact proposal input artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: proposal-inputs-${{ inputs.proposal_id }}
+          path: .protected-inputs
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.proposal_run_id }}
+      - name: Authenticate AWS with protected OIDC role
+        if: inputs.provider == 'aws'
+        env:
+          OIDC_PROVIDER: aws
+          OIDC_AUDIENCE: sts.amazonaws.com
+          OIDC_ROLE_ARN: ${{ vars.AWS_PLAN_ROLE_ARN }}
+        run: scripts/authenticate-oidc.sh
+      - name: Authenticate Azure with protected OIDC identity
+        if: inputs.provider == 'azure'
+        env:
+          OIDC_PROVIDER: azure
+          OIDC_AUDIENCE: api://AzureADTokenExchange
+          AZURE_CLIENT_ID: ${{ vars.AZURE_PLAN_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+        run: scripts/authenticate-oidc.sh
+      - name: Create and hash exact provider plan
+        run: scripts/terraform-lifecycle.sh
+      - name: Publish exact plan artifact
+        run: |
+          rm -rf plan-artifact
+          mkdir -p plan-artifact
+          cp -R .protected-inputs/bundle plan-artifact/
+          cp tfplan plan-artifact/tfplan
+          sha256sum "${PLAN_PROPOSAL_FILE}" | awk '{print $1}' > plan-artifact/proposal.sha256
+          sha256sum "${PLAN_TFVARS_FILE}" | awk '{print $1}' > plan-artifact/tfvars.sha256
+      - name: Upload saved plan and bindings
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: plan-${{ inputs.proposal_id }}
+          path: plan-artifact
+          if-no-files-found: error
+          retention-days: 1

@@ -1,0 +1,19 @@
+flowchart LR
+    request[Normalized request]
+    common[Common guardrails
+provider lock, owner, CIDR,
+budget, expiry, classification]
+    aws[AWS policy
+EKS, IAM, KMS, logging, OIDC]
+    azure[Azure policy
+AKS, Entra, Key Vault, logging, federation]
+    decision{Allowed?}
+    feedback[Stable code, field,
+friendly message]
+    bundle[Deterministic bundle]
+    request --> common --> decision
+    decision -->|no| feedback
+    decision -->|yes, AWS| aws --> bundle
+    decision -->|yes, Azure| azure --> bundle
+    aws -. selected installation only .-> decision
+    azure -. selected installation only .-> decision

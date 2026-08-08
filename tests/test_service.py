@@ -18,7 +18,6 @@ from secure_cloud_platform.service import (
     InstallationNotFoundError,
     InstallationRejectedError,
     PlatformService,
-    UnsupportedSimulationError,
 )
 
 
@@ -133,11 +132,16 @@ def test_service_requires_key_and_keeps_denied_results() -> None:
     assert denied.outcome.decision.violations[0].field == "network_cidr"
 
 
-def test_non_simulation_installations_fail_closed() -> None:
+@pytest.mark.parametrize("mode", ["simulation", "sandbox", "enterprise"])
+def test_all_installation_modes_evaluate_requests_without_cloud_access(mode) -> None:
     service = make_service()
-    service.create_installation(provider="aws", mode="sandbox")
-    with pytest.raises(UnsupportedSimulationError):
-        service.create_environment_request(make_request(), idempotency_key="sandbox")
+    service.create_installation(provider="aws", mode=mode)
+    record = service.create_environment_request(
+        make_request(), idempotency_key=f"mode-{mode}"
+    )
+    assert record.state == "accepted"
+    assert record.request.provider is CloudProvider.AWS
+    assert record.outcome.result is not None
 
 
 @pytest.mark.parametrize(

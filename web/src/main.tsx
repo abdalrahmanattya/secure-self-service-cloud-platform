@@ -9,6 +9,8 @@ import { NewRequestPage } from "./pages/NewRequestPage";
 import { ReadinessPage } from "./pages/ReadinessPage";
 import { RequestPage } from "./pages/RequestPage";
 import { SetupPage } from "./pages/SetupPage";
+import { OperationsPage } from "./pages/OperationsPage";
+import { ProposalPage } from "./pages/ProposalPage";
 import { theme } from "./theme";
 
 const queryClient = new QueryClient();
@@ -26,6 +28,8 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/requests/new" element={<NewRequestPage />} />
               <Route path="/requests/:requestId" element={<RequestPage />} />
               <Route path="/readiness" element={<ReadinessPage />} />
+              <Route path="/operations" element={<OperationsPage />} />
+              <Route path="/proposals/:proposalId" element={<ProposalPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>

@@ -1,4 +1,11 @@
-import { Alert, Card, CardContent, Stack, Typography } from "@mui/material";
+import {
+  Alert,
+  Card,
+  CardContent,
+  CircularProgress,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../api/client";
 
@@ -38,10 +45,23 @@ export function ReadinessPage() {
               <Typography>
                 <strong>Status:</strong> {installation.data.status}
               </Typography>
-              <Alert severity="info">
-                This build performs simulation only. No infrastructure is
-                applied.
-              </Alert>
+              <Stack spacing={1}>
+                <Alert severity="success">
+                  Available now: credential-free request evaluation and
+                  deterministic proposal generation from accepted requests.
+                </Alert>
+                <Alert severity="warning">
+                  Guarded prerequisites: GitHub review, protected plan,
+                  approval, apply, drift, rollback, and destroy require an
+                  explicitly configured protected workflow. They are not enabled
+                  or executed by this portal.
+                </Alert>
+              </Stack>
+            </Stack>
+          ) : installation.isLoading ? (
+            <Stack direction="row" spacing={1} alignItems="center">
+              <CircularProgress size={20} aria-label="Loading installation" />
+              <Typography>Loading installation readiness…</Typography>
             </Stack>
           ) : (
             <Alert severity="warning">No installation has been created.</Alert>
@@ -51,9 +71,22 @@ export function ReadinessPage() {
       <Card>
         <CardContent>
           <Typography variant="h2" fontSize={24} gutterBottom>
-            Provider simulations
+            Provider options
           </Typography>
           <Stack spacing={1}>
+            {providers.isLoading && <Typography>Loading providers…</Typography>}
+            {!providers.isLoading &&
+              !providers.isError &&
+              (providers.data?.providers ?? []).length === 0 && (
+                <Typography color="text.secondary">
+                  No provider options are available.
+                </Typography>
+              )}
+            {providers.isError && (
+              <Alert severity="error">
+                Provider options could not be loaded from the local API.
+              </Alert>
+            )}
             {(providers.data?.providers ?? []).map((item) => (
               <Typography key={item.provider}>
                 {item.display_name}:{" "}

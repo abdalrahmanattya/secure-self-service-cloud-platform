@@ -209,9 +209,9 @@ silently changing the meaning of existing Terraform state.
 ## Deployment safeguards
 
 Provider selection is checked at every important boundary. A protected real
-deployment requires a merged proposal, an exact commit, matching request and
-proposal identifiers, a successful budget check, a verified saved-plan hash,
-and protected environment approval. The workflow also verifies that the
+deployment requires exact default-branch proposal inputs, an exact commit,
+matching request/proposal/provider/mode, verified input/plan hashes,
+independent review, and protected Environment approval. The workflow also verifies that the
 provider in the proposal matches the active installation profile.
 
 Real deployments use short-lived AWS or Azure OIDC credentials after an

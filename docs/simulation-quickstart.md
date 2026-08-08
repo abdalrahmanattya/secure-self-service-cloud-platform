@@ -1,6 +1,6 @@
 # Local simulation quickstart
 
-This quickstart runs the implemented Milestones 3–5 path locally: deterministic
+This quickstart runs the implemented simulation path locally: deterministic
 AWS or Azure simulation adapters behind the shared service, a FastAPI API, the
 Typer CLI, and the React portal. It creates no cloud resources and needs no
 cloud credentials.
@@ -40,8 +40,9 @@ from a second terminal:
 curl --fail http://127.0.0.1:8000/health
 ```
 
-The response reports `"simulation":true`. The API stores its installation and
-request records only in the process memory; restarting it clears that state.
+The response reports `"simulation":true`. The API stores its installation,
+request, proposal, and idempotency records only in process memory; restarting
+it clears that state.
 
 ## Start the web portal
 
@@ -55,8 +56,9 @@ npm run dev -- --host 127.0.0.1
 
 Open <http://127.0.0.1:5173>. Vite proxies API, health, version, and metrics
 requests to `127.0.0.1:8000`. Use the setup page to select exactly one
-provider. The portal shows sandbox and enterprise as configuration-only modes;
-simulation is the only executable mode in this demo.
+provider. All modes can evaluate requests and create deterministic review
+proposals locally. Simulation also returns mocked provider resources; sandbox
+and enterprise are proposal-only and cannot perform cloud operations.
 
 ## Create and validate a CLI profile
 
@@ -77,8 +79,8 @@ The profile is active, provider-locked, and defaults to the supported AWS
 region `eu-west-1`. To exercise Azure instead, use
 `--provider azure`; its default supported region is `northeurope`.
 
-Create a request file with the following deterministic, simulation-only
-example:
+Create a request file with the following deterministic local example. This
+example uses simulation mode so it also returns mocked provider resources:
 
 ```sh
 cat > request.json <<'EOF'
@@ -99,13 +101,16 @@ EOF
 
 platform request validate request.json --profile profile.json
 platform request render request.json --profile profile.json
+platform request propose request.json --profile profile.json --output proposal-bundle
 ```
 
 `validate` returns the normalized request, stable request ID, fingerprint, and
-policy decision. `render` includes the same decision plus the deterministic
-provider resource descriptions. Neither command writes Terraform, calls a
-provider, or applies infrastructure. Change `environment` to `development` or
-`test` only when supplying a future `non_production_expiry` date.
+policy decision. `render` adds deterministic provider resource descriptions.
+`propose` prints the immutable proposal and writes its seven artifacts plus a
+`.platform-proposal.json` safety marker. The generated provider
+`.auto.tfvars.json` is input evidence; no command runs Terraform or contacts a
+provider. Change `environment` to `development` or `test` only when supplying a
+future `non_production_expiry` date.
 
 ## What is and is not running
 
@@ -115,15 +120,21 @@ The local demo provides:
 - deterministic AWS and Azure resource descriptions;
 - one shared service used by API and CLI, plus a React client over the API;
 - friendly provider and common-policy validation; and
-- process-local API state with idempotent request handling.
+- process-local API state with idempotent request/proposal handling; and
+- deterministic proposal creation/status and safe CLI materialization.
 
 It does not provide:
 
 - AWS or Azure credentials, SDKs, account or subscription access;
 - cloud API calls, cloud resources, remote state, or cloud cost;
-- Terraform modules, proposals, plans, apply, destroy, or rollback actions; or
-- executable sandbox or enterprise deployment configuration.
+- real Terraform plans, apply, drift, rollback, destroy, or bootstrap actions;
+- durable proposal/API persistence; or
+- configured GitHub Environments, repository variables, provider trust, state,
+  accounts, or subscriptions.
 
-Sandbox and enterprise are intentionally configuration-only descriptions for
-future protected delivery. Stop the API and web processes with `Ctrl-C` when
-finished.
+AWS/Azure roots and protected workflows are implemented and locally validated,
+but `REAL_DEPLOYMENT_ENABLED` remains absent or false and operator configuration
+is not present. Sandbox and enterprise proposals use the same credential-free
+evaluation path but do not execute provider resources locally. No live cloud
+validation is implied. Stop the API and web
+processes with `Ctrl-C` when finished.

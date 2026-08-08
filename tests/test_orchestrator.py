@@ -10,7 +10,6 @@ from secure_cloud_platform import (
     PolicyViolation,
     ProviderAdapter,
     ProviderValidation,
-    SimulationModeRequiredError,
     SimulationOrchestrator,
     SimulationResource,
 )
@@ -173,16 +172,21 @@ def test_inconsistent_adapter_denial_is_rejected() -> None:
         ProviderValidation(allowed=False)
 
 
-def test_non_simulation_modes_require_explicit_simulation_mode(
-    profile_factory, request_model
+@pytest.mark.parametrize("mode", ["simulation", "sandbox", "enterprise"])
+def test_all_installation_modes_use_credential_free_evaluation(
+    profile_factory, request_model, mode
 ) -> None:
-    profile = profile_factory(mode="sandbox")
-    with pytest.raises(
-        SimulationModeRequiredError, match="simulation installation mode"
-    ):
-        SimulationOrchestrator(
-            {CloudProvider.AWS: FakeAdapter(CloudProvider.AWS)}
-        ).simulate(profile, request_model, today=date(2026, 8, 8))
+    profile = profile_factory(mode=mode)
+    adapter = FakeAdapter(CloudProvider.AWS)
+    outcome = SimulationOrchestrator({CloudProvider.AWS: adapter}).evaluate(
+        profile, request_model, today=date(2026, 8, 8)
+    )
+    assert outcome.decision.allowed
+    assert outcome.result is not None
+    assert outcome.result.provider is CloudProvider.AWS
+    assert adapter.installation_validation_calls == 1
+    assert adapter.request_validation_calls == 1
+    assert adapter.simulate_calls == 1
 
 
 def test_only_base_adapter_port_is_runtime_checkable() -> None:

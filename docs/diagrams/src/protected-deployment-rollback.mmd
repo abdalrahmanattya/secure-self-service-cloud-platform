@@ -1,0 +1,18 @@
+flowchart LR
+    proposal[Validated proposal input artifact]
+    checks[Exact commit, IDs, input hashes, plan hash]
+    env{Protected Environment}
+    reviewers[Required reviewers
+self-review prevented]
+    concurrency[Provider/mode/operation
+workflow concurrency]
+    oidc[OIDC exchange]
+    apply[Apply, rollback, or destroy]
+    health[Health and drift baseline]
+    incident[Incident or failed deployment]
+    rollback[Reviewed rollback plan]
+    proposal --> checks --> env
+    env --> reviewers --> concurrency --> oidc --> apply --> health
+    health -->|failure| incident --> rollback --> checks
+    health -->|success| done[Audit and monitor]
+    env -. missing operator settings .-> stop[Fail closed]

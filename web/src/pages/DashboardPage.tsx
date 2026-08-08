@@ -18,6 +18,10 @@ export function DashboardPage() {
     queryFn: api.installation,
   });
   const requests = useQuery({ queryKey: ["requests"], queryFn: api.requests });
+  const proposals = useQuery({
+    queryKey: ["proposals"],
+    queryFn: api.proposals,
+  });
   if (installation.isError)
     return (
       <Stack spacing={2} alignItems="flex-start">
@@ -42,7 +46,7 @@ export function DashboardPage() {
             Environment dashboard
           </Typography>
           <Typography color="text.secondary">
-            A clear view of safe, simulated environments.
+            A clear view of accepted requests and review proposals.
           </Typography>
         </div>
         <Button component={RouterLink} to="/requests/new" variant="contained">
@@ -86,9 +90,25 @@ export function DashboardPage() {
         <Grid size={{ xs: 12, md: 4 }}>
           <Card>
             <CardContent>
-              <Typography color="text.secondary">
-                Accepted simulations
+              <Typography color="text.secondary">Review proposals</Typography>
+              <Typography variant="h2">
+                {proposals.data?.proposals.length ?? 0}
               </Typography>
+              <Button
+                component={RouterLink}
+                to="/operations"
+                size="small"
+                sx={{ mt: 1, px: 0 }}
+              >
+                Open operations
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card>
+            <CardContent>
+              <Typography color="text.secondary">Accepted requests</Typography>
               <Typography variant="h2">
                 {requests.data?.requests.filter(
                   (item) => item.state === "accepted",
@@ -102,7 +122,9 @@ export function DashboardPage() {
             <CardContent>
               <Typography color="text.secondary">Cloud changes</Typography>
               <Typography variant="h2">0</Typography>
-              <Typography color="text.secondary">Simulation only</Typography>
+              <Typography color="text.secondary">
+                No cloud changes have been executed.
+              </Typography>
             </CardContent>
           </Card>
         </Grid>

@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "platform.fullname" . }}-portal
+  labels:
+    {{- include "platform.labels" . | nindent 4 }}
+spec:
+  maxUnavailable: 1
+  unhealthyPodEvictionPolicy: AlwaysAllow
+  selector:
+    matchLabels:
+      {{- include "platform.portalSelector" . | nindent 6 }}

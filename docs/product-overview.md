@@ -1,5 +1,9 @@
 # Secure Self-Service Cloud Platform
 
+`v1.0.0` release candidate, not a published release. The local simulation is
+executable; real cloud setup and deployment require separate operator
+configuration and approval and have not been run.
+
 The Secure Self-Service Cloud Platform is an internal developer platform for
 requesting consistent, governed cloud environments. It combines a friendly
 web portal, a REST API, a command-line interface, policy as code, and
@@ -54,9 +58,9 @@ those requirements before deployment.
 
 ### Operations teams
 
-Operations teams use deployment history, audit records, logs, health data,
-drift information, and runbooks to operate the environments and investigate
-incidents.
+Operations teams use proposal evidence and runbooks in the local RC. A real
+installation would add deployment history, provider logs, health, and drift
+evidence after operator configuration.
 
 ### Finance and governance teams
 
@@ -82,8 +86,9 @@ every team become an expert in every cloud service.
 - **Safe operations:** real changes require an approved proposal, an exact
   commit, a verified plan, and protected approval.
 
-The initial demonstration runs locally in simulation mode. The same design
-provides a path to a real AWS or Azure installation when the administrator has
+The release-candidate demonstration runs simulation and proposal creation
+locally. The protected definitions provide a path to a real AWS or Azure
+installation when the administrator has
 approved accounts or subscriptions, identity configuration, state storage,
 budgets, and cleanup procedures.
 
@@ -100,8 +105,9 @@ provides:
 
 - An installation wizard for provider and mode selection.
 - A guided environment-request form.
-- A review page with architecture, security, and cost summaries.
-- Request status, pull-request, approval, and deployment history.
+- Request detail with field-level policy and simulated resources.
+- Proposal creation/detail with IDs, content hash, and artifact previews.
+- An operations view listing local proposals and external lifecycle boundaries.
 - Platform-readiness and operations views.
 
 The portal explains policy failures beside the affected field and uses plain
@@ -125,15 +131,17 @@ GET  /v1/platform/modes
 POST /v1/environment-requests
 GET  /v1/environment-requests/{request_id}
 POST /v1/deployment-proposals
+GET  /v1/deployment-proposals
 GET  /v1/deployment-proposals/{proposal_id}
 GET  /health
 GET  /version
 GET  /metrics
 ```
 
-Request creation is idempotent. In a real installation, the API uses OIDC
-authentication and role-based authorization. The API creates proposals; it
-does not provide a direct Terraform apply operation.
+Request and proposal creation are idempotent. The local API has no cloud
+credential and does not implement real-mode caller authentication. GitHub
+workflow OIDC is a separate deployment identity plane. The API creates local
+proposal evidence and has no direct Terraform operation.
 
 ### CLI
 
@@ -142,7 +150,6 @@ The CLI supports scripting and terminal-based workflows:
 ```text
 platform setup init --provider aws|azure --mode simulation|sandbox|enterprise
 platform setup validate PROFILE
-platform setup propose PROFILE
 platform setup status
 
 platform request validate REQUEST.yaml
@@ -151,8 +158,10 @@ platform request propose REQUEST.yaml
 platform request status REQUEST_ID
 ```
 
-The CLI uses the same domain library and proposal generator as the API and
-portal. It also has no direct apply command.
+The CLI uses the same domain and proposal builder as the API and portal.
+`request propose` can safely materialize a deterministic bundle, while
+`request status` reads saved proposal/request documents or process-local IDs.
+The CLI has no direct Terraform or cloud command.
 
 ## Request lifecycle
 
@@ -174,7 +183,7 @@ Evaluate common and provider-specific policies
 Generate deterministic provider-specific Terraform inputs
         |
         v
-Create a GitHub proposal for review
+Create deterministic proposal evidence for review
         |
         v
 Run Terraform, policy, security, and documentation checks
@@ -197,9 +206,9 @@ provider is inherited from the installation profile rather than chosen per
 request.
 
 The real deployment boundary is deliberately separate from request creation.
-A protected workflow requires a merged proposal, an exact commit, matching
-request and proposal identifiers, a successful budget check, a saved plan and
-hash verification, protected environment approval, and an audit result. Later
+A protected workflow requires an exact default-branch commit, matching request
+and proposal identifiers, verified proposal/tfvars/plan hashes, independent
+review, protected Environment approval, and typed confirmation. The implemented
 workflows use short-lived OIDC credentials rather than static cloud keys.
 
 ## Operating modes
@@ -219,7 +228,9 @@ Simulation is the default development and demonstration mode.
 - Requests produce local validation results and simulated Terraform plans.
 
 Simulation lets a reviewer follow the complete request-to-proposal workflow
-without access to a cloud tenant.
+with mocked provider resources and without access to a cloud tenant. Sandbox
+and enterprise use the same credential-free evaluation and proposal-building
+path locally, but do not execute provider resources.
 
 ### Sandbox
 
@@ -249,6 +260,10 @@ shared-services, development, test, and production subscriptions.
 Enterprise mode validates that required boundaries are configured and that
 security, logging, shared services, and production do not collapse into an
 uncontrolled shared account or subscription.
+
+In the local release-candidate boundary, sandbox and enterprise requests are
+proposal-only: they can produce `ready_for_review` bundles, but cloud lifecycle
+operations require the separately configured protected GitHub workflows.
 
 ## Governance and safety boundaries
 

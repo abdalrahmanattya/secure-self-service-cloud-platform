@@ -1,0 +1,30 @@
+# Runtime containers and Helm
+
+The API and portal have separate multi-stage container definitions and one Helm
+application chart under `deploy/helm/platform`. They are implemented and their
+security contracts are locally checked; no image or chart is published by this
+release candidate.
+
+## Containers
+
+- API: Python `3.13.7` builder/runtime, local wheel installation, UID/GID
+  `10001`, non-root Uvicorn on port `8000`.
+- Portal: Node `22.14.0` build, nginx `1.29.1` runtime, UID/GID `10001`,
+  non-root HTTP on port `8080`.
+- Both use exact base tags, no `latest`, no copied secret files, and explicit
+  runtime users. Digest promotion remains a release-hardening follow-up.
+
+## Helm chart
+
+The chart deploys two replicas each by default with Services, dedicated service
+accounts, liveness/readiness probes, resource requests/limits, runtime-default
+seccomp, non-root IDs, read-only root filesystems, dropped capabilities,
+anti-affinity, topology spread, and PodDisruptionBudgets.
+
+NetworkPolicy defaults to deny and permits only ingress-controller-to-portal,
+portal-to-API, and DNS paths. Service-account token automount is disabled. The
+chart deliberately renders no Secret or ExternalSecret; an operator-reviewed
+overlay must supply provider-native workload identity and external secrets.
+
+The RC values use sanitized GHCR example names and `1.0.0-rc.1`; they do not
+refer to published images.

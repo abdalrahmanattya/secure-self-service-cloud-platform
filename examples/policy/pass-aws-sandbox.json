@@ -1,0 +1,29 @@
+{
+  "provider": "aws",
+  "mode": "sandbox",
+  "environment": "staging",
+  "owner": "platform-team",
+  "cost_centre": "cc-example",
+  "data_classification": "internal",
+  "cloud_identifiers_used": false,
+  "request": {"provider": "aws"},
+  "network": {"kubernetes_api_private": true, "nodes_private": true},
+  "encryption": {"at_rest": true, "in_transit": true, "key_rotation": true},
+  "logging": {"central": true, "audit": true, "control_plane": true},
+  "identity": {
+    "least_privilege": true,
+    "federation": {
+      "issuer": "https://token.actions.githubusercontent.com",
+      "audience": "sts.amazonaws.com",
+      "subject": "repo:example-org/example-platform:environment:platform-apply",
+      "lifecycle_roles": {"plan": "plan-role", "apply": "apply-role", "destroy": "destroy-role"},
+      "actions": ["sts:GetCallerIdentity"]
+    }
+  },
+  "budget": {"monthly_limit": 150, "alerts_enabled": true},
+  "resources": {
+    "eks": {"endpoint_public_access": false, "node_subnet_visibility": "private", "secrets_encryption": "kms"},
+    "cloudtrail": {"enabled": true, "log_file_validation": true},
+    "s3": {"state_encryption": "kms", "public_access_block": true}
+  }
+}

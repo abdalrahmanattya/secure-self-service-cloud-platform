@@ -23,6 +23,7 @@ from .models import (
     InstallationMode,
     InstallationProfile,
 )
+from .proposals import DeploymentProposal
 from .service import (
     APPLICATION_VERSION,
     EnvironmentRequestNotFoundError,
@@ -37,8 +38,9 @@ from .service import (
     InvalidInterfaceInputError,
     ModeDescriptor,
     PlatformService,
+    ProposalNotAllowedError,
+    ProposalNotFoundError,
     ProviderDescriptor,
-    UnsupportedSimulationError,
 )
 
 
@@ -70,6 +72,14 @@ class RequestListResponse(APIModel):
     requests: tuple[EnvironmentRequestRecord, ...]
 
 
+class ProposalCreateBody(APIModel):
+    request_id: str = Field(min_length=1)
+
+
+class ProposalListResponse(APIModel):
+    proposals: tuple[DeploymentProposal, ...]
+
+
 class ErrorResponse(APIModel):
     code: str
     message: str
@@ -99,7 +109,11 @@ def _service_error_status(error: InterfaceError) -> int:
         return status.HTTP_422_UNPROCESSABLE_CONTENT
     if isinstance(
         error,
-        (InstallationNotFoundError, EnvironmentRequestNotFoundError),
+        (
+            InstallationNotFoundError,
+            EnvironmentRequestNotFoundError,
+            ProposalNotFoundError,
+        ),
     ):
         return status.HTTP_404_NOT_FOUND
     if isinstance(
@@ -107,7 +121,7 @@ def _service_error_status(error: InterfaceError) -> int:
         (
             IdempotencyConflictError,
             InstallationAlreadyExistsError,
-            UnsupportedSimulationError,
+            ProposalNotAllowedError,
         ),
     ):
         return status.HTTP_409_CONFLICT
@@ -133,8 +147,10 @@ def _interface_error_code(error: InterfaceError) -> str:
         return "validation-error"
     if isinstance(error, EnvironmentRequestNotFoundError):
         return "request-not-found"
-    if isinstance(error, UnsupportedSimulationError):
-        return "simulation-only"
+    if isinstance(error, ProposalNotFoundError):
+        return "proposal-not-found"
+    if isinstance(error, ProposalNotAllowedError):
+        return "proposal-not-allowed"
     return "interface-error"
 
 
@@ -287,6 +303,38 @@ def create_app(service: PlatformService | None = None) -> FastAPI:
     )
     def get_environment_request(request_id: str) -> EnvironmentRequestRecord:
         return platform.get_environment_request(request_id)
+
+    @app.post(
+        "/v1/deployment-proposals",
+        response_model=DeploymentProposal,
+        status_code=status.HTTP_201_CREATED,
+    )
+    def create_deployment_proposal(
+        body: ProposalCreateBody,
+        idempotency_key: Annotated[str | None, Header(alias="Idempotency-Key")] = None,
+    ) -> DeploymentProposal:
+        if idempotency_key is None or not idempotency_key.strip():
+            raise IdempotencyKeyRequiredError(
+                "an Idempotency-Key header is required for deployment proposals"
+            )
+        return platform.create_deployment_proposal(
+            body.request_id,
+            idempotency_key=idempotency_key,
+        )
+
+    @app.get(
+        "/v1/deployment-proposals",
+        response_model=ProposalListResponse,
+    )
+    def list_deployment_proposals() -> ProposalListResponse:
+        return ProposalListResponse(proposals=platform.list_deployment_proposals())
+
+    @app.get(
+        "/v1/deployment-proposals/{proposal_id}",
+        response_model=DeploymentProposal,
+    )
+    def get_deployment_proposal(proposal_id: str) -> DeploymentProposal:
+        return platform.get_deployment_proposal(proposal_id)
 
     return app
 
