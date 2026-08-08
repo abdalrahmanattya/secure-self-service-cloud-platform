@@ -27,10 +27,12 @@ nav:
   - Home: index.md
   - Product overview: product-overview.md
   - Architecture: architecture.md
+  - Domain model and contracts: domain-model.md
   - Provider selection: provider-selection.md
   - Diagrams: diagrams/README.md
   - Decisions:
       - Overview: decisions/README.md
       - One provider per installation: decisions/ADR-001-one-provider-per-installation.md
+      - Provider-neutral domain and adapter ports: decisions/ADR-002-provider-neutral-domain-and-adapter-ports.md
 
 strict: true

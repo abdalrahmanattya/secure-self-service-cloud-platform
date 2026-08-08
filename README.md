@@ -11,8 +11,9 @@ policies, generates deterministic Terraform inputs, and creates an auditable
 GitHub proposal. Real infrastructure changes remain behind protected planning
 and approval workflows.
 
-> **Project status:** architecture and portfolio foundation are being
-> established. Simulation will be implemented before any real-cloud path.
+> **Project status:** Milestone 2 common domain contracts and credential-free
+> simulation orchestration are implemented. Provider-specific adapters and
+> user interfaces are planned next.
 
 ## The problem
 
@@ -72,7 +73,8 @@ or real deployment configuration.
 
 Start with the [documentation index](docs/index.md), then review the
 [architecture](docs/architecture.md) and the decision to
-[select one provider per installation](docs/decisions/ADR-001-one-provider-per-installation.md).
+[select one provider per installation](docs/decisions/ADR-001-one-provider-per-installation.md),
+then explore the [domain model and contracts](docs/domain-model.md).
 
 ## License
 
