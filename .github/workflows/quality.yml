@@ -1,0 +1,78 @@
+name: Documentation quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22.14.0'
+          cache: npm
+          cache-dependency-path: tools/diagrams/package-lock.json
+
+      - name: Install documentation dependencies
+        run: python -m pip install --requirement requirements/docs.txt
+
+      - name: Install diagram dependencies
+        run: npm ci --prefix tools/diagrams
+
+      - name: Render Mermaid diagrams
+        run: scripts/render-diagrams.sh
+
+      - name: Reject rendered diagram drift
+        shell: sh
+        run: |
+          set -eu
+          rendered_dir='docs/diagrams/rendered'
+          drift=0
+
+          if git diff --quiet -- "$rendered_dir"; then
+            printf '%s\n' 'Tracked rendered diagrams are unchanged.'
+          else
+            printf '%s\n' 'Tracked rendered diagrams differ from the committed output:' >&2
+            git diff --name-status -- "$rendered_dir" >&2
+            drift=1
+          fi
+
+          untracked=$(git ls-files --others --exclude-standard -- "$rendered_dir")
+          if [ -n "$untracked" ]; then
+            printf '%s\n' 'New untracked rendered diagram files were generated:' >&2
+            printf '%s\n' "$untracked" >&2
+            drift=1
+          else
+            printf '%s\n' 'No untracked rendered diagram files found.'
+          fi
+
+          if [ "$drift" -ne 0 ]; then
+            printf '%s\n' 'Rendered diagram drift detected; regenerate and commit the SVG outputs.' >&2
+            exit 1
+          fi
+
+          printf '%s\n' 'Rendered diagram outputs match the committed files.'
+
+      - name: Build documentation strictly
+        run: python -m mkdocs build --strict --clean
+
+      - name: Check Markdown links
+        run: scripts/check-markdown-links.sh
+
+      - name: Check repository hygiene
+        run: scripts/check-repository-hygiene.sh

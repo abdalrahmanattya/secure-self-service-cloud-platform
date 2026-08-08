@@ -1,0 +1,17 @@
+%% Provider selection is immutable after installation activation.
+stateDiagram-v2
+    state "Active / Provider Locked" as ActiveProviderLocked
+
+    [*] --> Unconfigured: start installation
+    Unconfigured --> ProviderSelected: choose AWS or Azure
+    ProviderSelected --> Simulation: choose simulation mode
+    ProviderSelected --> Sandbox: choose sandbox mode
+    ProviderSelected --> Enterprise: choose enterprise mode
+    Simulation --> ActiveProviderLocked: activate simulation installation
+    Sandbox --> ActiveProviderLocked: activate sandbox installation
+    Enterprise --> ActiveProviderLocked: activate enterprise installation
+    ActiveProviderLocked --> ActiveProviderLocked: submit provider-matching request
+    ActiveProviderLocked --> Rejected: request uses other provider
+    ActiveProviderLocked --> Rejected: attempt to change provider
+    Rejected --> ActiveProviderLocked: correct request
+    ActiveProviderLocked --> [*]: retire installation

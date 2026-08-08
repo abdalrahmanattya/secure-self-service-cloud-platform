@@ -1,0 +1,21 @@
+%% System context: the platform coordinates requests and reviewed delivery.
+flowchart LR
+    developer["Application developer\nrequests an environment"]
+    administrator["Platform administrator\nselects provider and mode"]
+    platform["Secure Self-Service\nCloud Platform\nPortal · API · CLI"]
+    github["GitHub\nproposal review and\nprotected workflows"]
+    aws["AWS installation\noptional real deployment"]
+    azure["Azure installation\noptional real deployment"]
+
+    developer -->|request| platform
+    administrator -->|configuration| platform
+    platform -->|deterministic proposal| github
+    github -.->|approved plan| aws
+    github -.->|approved plan| azure
+
+    classDef person fill:#fff7ed,stroke:#c2410c,color:#172033,stroke-width:1px
+    classDef system fill:#e8f0fe,stroke:#315c9b,color:#172033,stroke-width:2px
+    classDef external fill:#f1f5f9,stroke:#52606d,color:#172033,stroke-width:1px
+    class developer,administrator person
+    class platform system
+    class github,aws,azure external
