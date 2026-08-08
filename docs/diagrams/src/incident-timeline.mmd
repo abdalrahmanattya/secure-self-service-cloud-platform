@@ -1,0 +1,16 @@
+sequenceDiagram
+    participant Detect as Detection
+    participant Ops as Operations
+    participant GitHub as Protected Environment
+    participant Cloud as Selected provider
+    participant Audit as Evidence and audit
+    Detect->>Ops: Alert: drift, health, identity, or budget
+    Ops->>GitHub: Freeze mutation concurrency
+    Ops->>Audit: Preserve logs, state, IDs, hashes
+    Ops->>Cloud: Read-only scope and containment
+    Ops->>GitHub: Prepare reviewed rollback or corrective proposal
+    GitHub-->>Ops: Required reviewer approval
+    Ops->>Cloud: Execute exact approved recovery plan
+    Cloud-->>Ops: Provider result and health signals
+    Ops->>Audit: Verify controls, baseline, root cause, actions
+    Audit-->>Ops: Close or escalate with lessons learned

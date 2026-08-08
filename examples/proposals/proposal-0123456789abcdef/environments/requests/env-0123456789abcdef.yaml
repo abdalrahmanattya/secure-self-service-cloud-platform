@@ -1,0 +1,11 @@
+application: example-service
+business_justification: Demonstrate the protected sandbox proposal lifecycle.
+cluster_size: small
+cost_centre: portfolio
+data_classification: internal
+environment: development
+monthly_budget: '150.00'
+network_cidr: 10.40.0.0/16
+non_production_expiry: '2026-09-30'
+owner: platform-team
+region: eu-west-1

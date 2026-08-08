@@ -1,0 +1,28 @@
+flowchart TB
+    operator[Platform operator]
+    github[GitHub Environment
+required reviewers and concurrency]
+    azure_oidc[Entra federated credential
+exact issuer and repo/environment subject]
+    subgraph AZURE[Azure tenant and management groups]
+        mgmt[Management subscription]
+        connectivity[Connectivity subscription]
+        identity[Identity subscription]
+        shared[Shared services subscription]
+        subgraph sandbox[Sandbox subscription]
+            vnet[VNet private subnets]
+            aks[Private AKS with Azure CNI]
+            controls[Key Vault, Monitor, Policy, Budget]
+        end
+        subgraph enterprise[Enterprise subscriptions]
+            dev[Development]
+            test[Test]
+            prod[Production]
+        end
+    end
+    operator --> github --> azure_oidc --> AZURE
+    connectivity --> shared
+    identity --> shared
+    connectivity --> sandbox
+    connectivity --> enterprise
+    vnet --> aks --> controls

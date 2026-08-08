@@ -74,7 +74,8 @@ def test_cli_refuses_profile_overwrite_without_force(tmp_path) -> None:
     assert "force" in result.stdout
 
 
-def test_cli_has_no_apply_or_propose_command() -> None:
+def test_cli_has_no_apply_plan_or_destroy_command() -> None:
     result = CliRunner().invoke(create_cli(), ["--help"])
     assert "apply" not in result.stdout
-    assert "propose" not in result.stdout
+    assert "plan" not in result.stdout
+    assert "destroy" not in result.stdout

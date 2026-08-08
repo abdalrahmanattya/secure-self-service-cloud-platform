@@ -31,6 +31,9 @@ export function Layout() {
           <Button color="inherit" component={RouterLink} to="/readiness">
             Readiness
           </Button>
+          <Button color="inherit" component={RouterLink} to="/operations">
+            Operations
+          </Button>
         </Toolbar>
       </AppBar>
       <Container component="main" maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>

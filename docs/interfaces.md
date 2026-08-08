@@ -2,9 +2,9 @@
 
 The API, CLI, and portal are three views over one `PlatformService`. The
 service owns exactly one provider-locked `InstallationProfile` and a
-process-local request/idempotency store. Interfaces do not implement separate
-policy rules: they construct the immutable domain request and call the same
-service operation.
+process-local request, proposal, and idempotency stores. Interfaces do not
+implement separate policy rules: they construct the immutable domain request
+and call the same service operations.
 
 ## Equivalence
 
@@ -29,12 +29,16 @@ to the field named by each violation.
 | `POST` | `/v1/environment-requests` | Validate, store, and simulate a request. |
 | `GET` | `/v1/environment-requests` | List deterministic request records. |
 | `GET` | `/v1/environment-requests/{request_id}` | Read one request record. |
+| `POST` | `/v1/deployment-proposals` | Idempotently create a deterministic proposal for an accepted request. |
+| `GET` | `/v1/deployment-proposals` | List proposals in stable proposal-ID order. |
+| `GET` | `/v1/deployment-proposals/{proposal_id}` | Read one immutable proposal. |
 | `GET` | `/health` | Local process health. |
 | `GET` | `/version` | Application name and version. |
 | `GET` | `/metrics` | Deterministic local text metrics. |
 
-There are intentionally no deployment proposal, apply, destroy, Terraform,
-cloud credential, or provider SDK endpoints in this milestone.
+There is intentionally no API plan, apply, rollback, drift, or destroy endpoint.
+Proposal creation is local and credential-free; it does not create a pull
+request or call Terraform/provider APIs.
 
 Syntactically valid requests are processed into an `EnvironmentRequestRecord`
 even when common or provider policy denies them. The API returns that record
@@ -51,6 +55,9 @@ platform setup validate PROFILE.json|PROFILE.yaml
 platform setup status PROFILE.json|PROFILE.yaml
 platform request validate REQUEST.json|REQUEST.yaml --profile PROFILE.json|PROFILE.yaml
 platform request render REQUEST.json|REQUEST.yaml --profile PROFILE.json|PROFILE.yaml
+platform request propose REQUEST.json|REQUEST.yaml --profile PROFILE.json|PROFILE.yaml \
+  [--output BUNDLE] [--force]
+platform request status REQUEST_OR_PROPOSAL_ID_OR_FILE [--profile PROFILE]
 ```
 
 `setup init` prints stable JSON and writes a profile only when the explicit
@@ -60,9 +67,11 @@ provided. Validation and status reconstruct the profile from that file.
 Request validation and rendering also reconstruct an isolated service from
 the required active profile file. They therefore work across separate CLI
 processes and produce the same IDs and decisions as direct service/API calls.
-There is no CLI apply or propose command. Request status is intentionally not
-part of this public process-independent command set; the request store remains
-an in-memory API/service demo boundary.
+`request propose` emits the full proposal as stable JSON and optionally
+materializes its seven artifacts plus the safety marker. `request status` reads
+a full saved proposal JSON document, evaluates a standalone request document
+when `--profile` is supplied, or resolves a process-local ID when invoked in the
+same service process. IDs are not durable across separate CLI/API processes.
 
 All commands print stable JSON. Validation and policy failures print a typed
 error or decision and return a nonzero exit status. `render` describes the
@@ -71,14 +80,21 @@ infrastructure.
 
 ## Portal pages
 
-- **Setup** selects the provider and installation mode once. Sandbox and
-  enterprise are visibly configuration-only in this demo.
+- **Setup** selects the provider and installation mode once. All modes can
+  evaluate requests and create local review proposals; simulation also
+  returns mocked provider resources, while sandbox and enterprise remain
+  proposal-only until protected deployment is configured.
 - **Dashboard** summarizes the installation and request history.
 - **New environment** collects business and platform requirements without
   requiring Terraform knowledge. The provider is displayed from the profile,
   and the profile's first allowed region is prefilled.
 - **Request result** displays accepted or denied records, field-level policy
-  feedback, stable request ID, and simulated resources.
+  feedback, stable request ID, simulated resources, and proposal creation for
+  accepted requests.
+- **Proposal** shows state, provider/mode, request link, content hash, schema,
+  artifact paths, and content previews.
+- **Operations** lists process-memory proposals and explicitly marks GitHub
+  review and all later protected stages as external/not executed.
 - **Readiness** explains the selected provider, mode, and simulation boundary.
 
 The portal uses React Router, TanStack Query, React Hook Form, Material UI,
@@ -89,7 +105,8 @@ directory) regenerates `src/api/generated.ts` with the exact-pinned
 
 ## Idempotency
 
-`POST /v1/environment-requests` requires a non-empty `Idempotency-Key` header.
+`POST /v1/environment-requests` and `POST /v1/deployment-proposals` require a
+non-empty `Idempotency-Key` header.
 The service compares that key with the normalized request fingerprint under an
 in-process lock:
 
@@ -102,16 +119,24 @@ in-process lock:
 The portal creates one key per submission attempt and reuses it for retries.
 A new form submission after navigation creates a new attempt key.
 
+Proposal retries with the same key/request return the same proposal and HTTP
+`201`; key reuse for another request returns `409`. Different keys for the same
+deterministic request converge on its canonical proposal ID/content.
+
 ## State and safety boundary
 
 State is explicitly demo-only and exists in memory for the lifetime of one
-service instance. Restarting the API loses the installation and request list.
+service instance. Restarting the API loses the installation, request list,
+proposal list, and idempotency bindings.
 The service does not read environment variables, files, credentials, cloud
 configuration, or telemetry destinations. Both provider adapters are
 credential-free simulation adapters. AWS and Azure setup defaults select
 `eu-west-1` and `northeurope` respectively; an unsupported region is rejected
 before the profile is stored, so setup can be retried.
 
-Sandbox and enterprise modes describe future readiness, but this milestone
-rejects request execution outside simulation mode. No interface can run
-`terraform apply` or make a cloud call.
+All modes support credential-free request evaluation and deterministic proposal
+generation. Simulation can additionally return mocked provider resources.
+Sandbox and enterprise are proposal-only locally: no interface can run
+`terraform apply` or make a cloud call. Cloud lifecycle operations are limited
+to separately configured, protected GitHub workflows, which are disabled and
+unexecuted in this release candidate.

@@ -10,7 +10,7 @@ root.
 
 ## Boundary and no-cloud guarantee
 
-Milestone 4 is simulation-only. The adapter does not import Azure SDKs,
+The adapter itself is simulation-only. It does not import Azure SDKs,
 Terraform, Azure CLI, AzureRM, AzureAD, or any other cloud client. It does not
 read credentials or environment variables, make DNS or HTTP requests, inspect
 an Azure tenant or subscription, create resources, reserve capacity, or
@@ -77,12 +77,11 @@ selection before activation. Azure's simulation defaults are:
 - networking: VNet-private service paths with controlled egress; and
 - cost: the request's monthly budget with 80% and 100% alert thresholds.
 
-Sandbox and enterprise wording describes design intent only. Sandbox designs
-use controlled egress and a constrained subscription boundary. Enterprise
-designs can map the same controls to hub-spoke networking, centralized
-logging, separated subscriptions, and protected identity workflows in a later
-approved delivery milestone. Neither mode is contacted by this adapter.
+Sandbox and enterprise resource shapes are implemented in the separate Azure
+Terraform root and modules. The simulation adapter itself remains credential-
+free and contacts neither mode. Full hub-spoke/multi-subscription landing-zone
+configuration remains operator-owned.
 
-Real Azure bootstrap, state storage, plan, apply, destroy, credentials,
-subscription configuration, and protected deployment remain separate
-explicitly approved capabilities and are outside this simulation adapter.
+Azure bootstrap, state, and protected lifecycle definitions remain separate
+from this adapter. Their real credentials/subscription configuration and any
+execution require explicit operator approval and are absent in this RC.

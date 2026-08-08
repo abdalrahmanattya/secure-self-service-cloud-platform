@@ -1,0 +1,22 @@
+sequenceDiagram
+    actor Developer
+    participant UI as Portal/API/CLI
+    participant S as Platform service
+    participant P as Policy engine
+    participant B as Bundle builder
+    participant G as External GitHub workflow
+    Developer->>UI: Submit request + idempotency key
+    UI->>S: Validate and normalize
+    S->>P: Evaluate common and provider policy
+    alt denied
+        P-->>S: Friendly violations
+        S-->>UI: Stable denied record
+    else accepted
+        P-->>S: Accepted decision
+        S->>B: Build canonical proposal bundle
+        B-->>S: Proposal ID, content hash, seven artifacts
+        S-->>UI: ready_for_review proposal
+        UI-->>Developer: Evidence and optional CLI bundle
+        Developer-->>G: Separately publish/review exact inputs
+        Note over S,G: GitHub approval never mutates local proposal state
+    end

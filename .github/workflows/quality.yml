@@ -16,6 +16,29 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: Install exact Terraform CLI
+        run: scripts/install-terraform.sh "${RUNNER_TEMP}/terraform"
+
+      - name: Add verified Terraform CLI to PATH
+        run: echo "${RUNNER_TEMP}" >> "${GITHUB_PATH}"
+
+      - name: Install pinned Conftest
+        run: scripts/install-conftest.sh "${RUNNER_TEMP}/conftest"
+
+      - name: Validate Terraform mock tests and Conftest policies
+        env:
+          CONFTEST_BIN: ${{ runner.temp }}/conftest
+        run: scripts/check-terraform-policy.sh
+
+      - name: Check protected workflow security
+        run: scripts/check-workflow-security.sh
+
+      - name: Check materialized proposal bundle contract
+        run: scripts/check-proposal-contract.sh
+
+      - name: Check container and Helm security defaults
+        run: scripts/check-containers.sh
+
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:

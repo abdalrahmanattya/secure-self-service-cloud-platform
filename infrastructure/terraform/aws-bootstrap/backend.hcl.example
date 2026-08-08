@@ -1,0 +1,7 @@
+# Operator-run only. Do not put account identifiers or credentials in the repo.
+# Terraform 1.15 native S3 lockfile support replaces DynamoDB-only locking.
+bucket       = "example-platform-state"
+key          = "platform/terraform.tfstate"
+region       = "eu-west-1"
+encrypt      = true
+use_lockfile = true

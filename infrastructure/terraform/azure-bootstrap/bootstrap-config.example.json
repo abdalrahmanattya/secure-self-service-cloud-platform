@@ -1,0 +1,11 @@
+{
+  "location": "northeurope",
+  "resource_group_name": "example-platform-bootstrap",
+  "storage_account_name": "exampleplatformstate",
+  "deployment_scope_id": "/subscriptions/<operator-supplied-subscription-id>",
+  "trusted_bootstrap_access": false,
+  "private_endpoint_subnet_id": "<operator-supplied-private-subnet-id>",
+  "private_dns_zone_ids": ["<operator-supplied-private-dns-zone-id>"],
+  "github_repository": "example-org/example-platform",
+  "github_environment": "platform"
+}

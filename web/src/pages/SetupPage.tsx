@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { api } from "../api/client";
+import { api, apiErrorFields, apiErrorMessage } from "../api/client";
 import type { InstallationMode, Provider } from "../api/client";
 
 export function SetupPage() {
@@ -42,8 +42,8 @@ export function SetupPage() {
           Choose your platform
         </Typography>
         <Typography color="text.secondary" sx={{ mt: 1 }}>
-          Select one provider for this installation. The demo uses deterministic
-          simulation and never asks for credentials.
+          Select one provider for this installation. Request evaluation and
+          proposal generation are local and credential-free.
         </Typography>
       </div>
       <Card component="section" aria-labelledby="setup-heading">
@@ -98,9 +98,9 @@ export function SetupPage() {
             </TextField>
             {mode !== "simulation" && (
               <Alert severity="warning" role="status">
-                {mode} is configuration-only in this demo. Request execution
-                remains simulation-only; no cloud resources or deployment
-                actions are available.
+                {mode} generates deterministic proposals locally without
+                credentials. Cloud execution requires a protected external
+                workflow and is not available from this portal.
               </Alert>
             )}
             <Button
@@ -111,9 +111,19 @@ export function SetupPage() {
               Create installation
             </Button>
             {mutation.isError && (
-              <Alert severity="error">
-                The installation could not be created. Review the API response
-                and try again.
+              <Alert severity="error" role="alert">
+                {apiErrorMessage(
+                  mutation.error,
+                  "The installation could not be created.",
+                )}
+                {apiErrorFields(mutation.error).map((field) => (
+                  <Typography
+                    key={`${field.code}-${field.field}`}
+                    component="div"
+                  >
+                    {field.field}: {field.message}
+                  </Typography>
+                ))}
               </Alert>
             )}
             {mutation.data && (

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: secure-cloud-platform
+description: Provider-neutral API and portal workloads for the secure self-service platform
+type: application
+version: 1.0.0-rc.1
+appVersion: "1.0.0-rc.1"

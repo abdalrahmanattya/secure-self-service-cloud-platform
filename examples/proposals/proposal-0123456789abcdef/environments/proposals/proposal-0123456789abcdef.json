@@ -1,0 +1,10 @@
+{
+  "installation_id": "install-0123456789abcdef",
+  "mode": "sandbox",
+  "proposal_id": "proposal-0123456789abcdef",
+  "provider": "aws",
+  "request_fingerprint": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "request_id": "env-0123456789abcdef",
+  "schema_version": "proposal.v1",
+  "state": "ready_for_review"
+}

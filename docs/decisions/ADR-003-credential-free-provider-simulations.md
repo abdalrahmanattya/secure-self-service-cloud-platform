@@ -15,7 +15,7 @@ credential, state backend, or billable resource is introduced.
 Milestones 3 and 4 implement deterministic simulation adapters. Each adapter
 validates provider-specific regions and returns provider-native resource
 descriptions containing the security, identity, networking, Kubernetes,
-logging, and budget controls that a later Terraform implementation must
+logging, and budget controls that the provider Terraform implementations must
 provide.
 
 The adapters do not import cloud SDKs, read environment credentials, call
@@ -30,6 +30,6 @@ infrastructure exists.
 
 - Both cloud designs can be reviewed and tested without cloud access or cost.
 - Provider differences remain explicit behind one common domain boundary.
-- Later Terraform implementations must satisfy the simulation contracts.
+- Provider Terraform implementations must satisfy the simulation contracts.
 - Simulation cannot validate live quotas, availability, identity, or service
-  configuration; those checks belong to later protected deployment stages.
+  configuration; those checks require separately enabled protected deployment.

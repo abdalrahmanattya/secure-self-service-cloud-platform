@@ -1,0 +1,75 @@
+name: Proposal validation
+
+on:
+  pull_request:
+    paths:
+      - infrastructure/**
+      - policy/**
+      - examples/**
+      - deploy/**
+      - containers/**
+      - scripts/check-*.sh
+      - scripts/verify-*.sh
+      - scripts/publish-proposal-inputs.sh
+      - scripts/terraform-lifecycle.sh
+      - scripts/validate-proposal-bundle.sh
+      - .github/workflows/**
+  workflow_dispatch:
+    inputs:
+      commit_sha: {description: Exact 40-character commit SHA, required: true, type: string}
+      proposal_id: {description: Sanitized proposal fixture directory, required: true, type: string}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: proposal-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install exact Terraform CLI
+        run: scripts/install-terraform.sh "${RUNNER_TEMP}/terraform"
+      - name: Install pinned Conftest
+        run: scripts/install-conftest.sh "${RUNNER_TEMP}/conftest"
+      - name: Add verified CLIs to PATH
+        run: echo "${RUNNER_TEMP}" >> "${GITHUB_PATH}"
+      - name: Validate Terraform, mock plans, and policies
+        env:
+          CONFTEST_BIN: ${{ runner.temp }}/conftest
+        run: scripts/check-terraform-policy.sh
+      - name: Validate workflow guards
+        run: scripts/check-workflow-security.sh
+      - name: Validate materialized proposal bundle bridge
+        run: scripts/check-proposal-contract.sh
+      - name: Validate container and Helm security defaults
+        run: scripts/check-containers.sh
+      - name: Check repository hygiene
+        run: scripts/check-repository-hygiene.sh
+
+  publish-proposal-inputs:
+    if: github.event_name == 'workflow_dispatch' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact proposal commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.commit_sha }}
+      - name: Validate and hash sanitized proposal inputs
+        env:
+          COMMIT_SHA: ${{ inputs.commit_sha }}
+          PROPOSAL_ID: ${{ inputs.proposal_id }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: scripts/publish-proposal-inputs.sh
+      - name: Publish exact proposal input artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: proposal-inputs-${{ inputs.proposal_id }}
+          path: .proposal-inputs
+          if-no-files-found: error
+          retention-days: 1

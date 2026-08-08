@@ -12,6 +12,22 @@ export type EnvironmentRequestRecord =
 export type ProviderDescriptor = components["schemas"]["ProviderDescriptor"];
 export type ModeDescriptor = components["schemas"]["ModeDescriptor"];
 export type PolicyViolation = components["schemas"]["PolicyViolation"];
+export type DeploymentProposal = components["schemas"]["DeploymentProposal"];
+export type ProposalArtifact = components["schemas"]["ProposalArtifact"];
+
+export type ApiErrorField = {
+  code: string;
+  field: string;
+  message: string;
+};
+
+export type ApiErrorPayload = {
+  error?: {
+    code?: string;
+    message?: string;
+    fields?: ApiErrorField[];
+  };
+};
 
 type ProvidersResponse =
   paths["/v1/platform/providers"]["get"]["responses"][200]["content"]["application/json"];
@@ -19,6 +35,8 @@ type ModesResponse =
   paths["/v1/platform/modes"]["get"]["responses"][200]["content"]["application/json"];
 type RequestsResponse =
   paths["/v1/environment-requests"]["get"]["responses"][200]["content"]["application/json"];
+type ProposalsResponse =
+  paths["/v1/deployment-proposals"]["get"]["responses"][200]["content"]["application/json"];
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -52,6 +70,10 @@ export const api = {
     request("/v1/environment-requests"),
   request: (id: string): Promise<EnvironmentRequestRecord> =>
     request(`/v1/environment-requests/${encodeURIComponent(id)}`),
+  proposals: (): Promise<ProposalsResponse> =>
+    request("/v1/deployment-proposals"),
+  proposal: (id: string): Promise<DeploymentProposal> =>
+    request(`/v1/deployment-proposals/${encodeURIComponent(id)}`),
   createRequest: (
     input: EnvironmentRequestInput,
     idempotencyKey: string,
@@ -60,6 +82,15 @@ export const api = {
       method: "POST",
       headers: { "Idempotency-Key": idempotencyKey },
       body: JSON.stringify(input),
+    }),
+  createProposal: (
+    requestId: string,
+    idempotencyKey: string,
+  ): Promise<DeploymentProposal> =>
+    request("/v1/deployment-proposals", {
+      method: "POST",
+      headers: { "Idempotency-Key": idempotencyKey },
+      body: JSON.stringify({ request_id: requestId }),
     }),
   createInstallation: (
     provider: Provider,
@@ -70,3 +101,23 @@ export const api = {
       body: JSON.stringify({ provider, mode }),
     }),
 };
+
+export function apiErrorMessage(
+  error: unknown,
+  fallback = "The API could not complete the operation.",
+): string {
+  if (typeof error === "object" && error !== null && "error" in error) {
+    const payload = error as ApiErrorPayload;
+    if (payload.error?.message) return payload.error.message;
+  }
+  if (error instanceof Error && error.message) return error.message;
+  return fallback;
+}
+
+export function apiErrorFields(error: unknown): ApiErrorField[] {
+  if (typeof error === "object" && error !== null && "error" in error) {
+    const payload = error as ApiErrorPayload;
+    return payload.error?.fields ?? [];
+  }
+  return [];
+}

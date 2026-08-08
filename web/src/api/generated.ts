@@ -38,6 +38,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/deployment-proposals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Deployment Proposals */
+        get: operations["list_deployment_proposals_v1_deployment_proposals_get"];
+        put?: never;
+        /** Create Deployment Proposal */
+        post: operations["create_deployment_proposal_v1_deployment_proposals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/deployment-proposals/{proposal_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Deployment Proposal */
+        get: operations["get_deployment_proposal_v1_deployment_proposals__proposal_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/environment-requests": {
         parameters: {
             query?: never;
@@ -194,6 +229,33 @@ export interface components {
          * @enum {string}
          */
         DataClassification: "public" | "internal" | "confidential" | "restricted";
+        /**
+         * DeploymentProposal
+         * @description Immutable proposal metadata and its complete textual artifact bundle.
+         */
+        DeploymentProposal: {
+            /** Artifacts */
+            artifacts: components["schemas"]["ProposalArtifact"][];
+            /** Content Hash */
+            content_hash: string;
+            /** Installation Id */
+            installation_id: string;
+            mode: components["schemas"]["InstallationMode"];
+            /** Proposal Id */
+            proposal_id: string;
+            provider: components["schemas"]["CloudProvider"];
+            /** Request Fingerprint */
+            request_fingerprint: string;
+            /** Request Id */
+            request_id: string;
+            /**
+             * Schema Version
+             * @default proposal.v1
+             */
+            schema_version: string;
+            /** @default ready_for_review */
+            state: components["schemas"]["ProposalState"];
+        };
         /**
          * EnvironmentRequest
          * @description Raw request submitted by a user; deliberately contains no provider.
@@ -396,6 +458,32 @@ export interface components {
             /** Message */
             message: string;
         };
+        /**
+         * ProposalArtifact
+         * @description One textual file in a proposal bundle.
+         */
+        ProposalArtifact: {
+            /** Content */
+            content: string;
+            /** Relative Path */
+            relative_path: string;
+        };
+        /** ProposalCreateBody */
+        ProposalCreateBody: {
+            /** Request Id */
+            request_id: string;
+        };
+        /** ProposalListResponse */
+        ProposalListResponse: {
+            /** Proposals */
+            proposals: components["schemas"]["DeploymentProposal"][];
+        };
+        /**
+         * ProposalState
+         * @description The only truthful state the local, review-only service can claim.
+         * @enum {string}
+         */
+        ProposalState: "ready_for_review";
         /** ProviderDescriptor */
         ProviderDescriptor: {
             /**
@@ -553,6 +641,92 @@ export interface operations {
                 };
                 content: {
                     "text/plain": string;
+                };
+            };
+        };
+    };
+    list_deployment_proposals_v1_deployment_proposals_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProposalListResponse"];
+                };
+            };
+        };
+    };
+    create_deployment_proposal_v1_deployment_proposals_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProposalCreateBody"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeploymentProposal"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_deployment_proposal_v1_deployment_proposals__proposal_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeploymentProposal"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

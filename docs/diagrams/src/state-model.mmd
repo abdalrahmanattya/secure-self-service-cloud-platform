@@ -1,0 +1,24 @@
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> Normalized: schema accepted
+    Normalized --> PolicyChecked: fingerprint calculated
+    PolicyChecked --> Denied: policy failure
+    PolicyChecked --> ReadyForReview: accepted bundle
+    state "ready_for_review (local immutable proposal)" as ReadyForReview
+    ReadyForReview --> ExternalReview: operator publishes exact inputs
+    state "external GitHub evidence" as ExternalReview
+    ExternalReview --> Planned: protected plan
+    Planned --> Applied: protected approval and exact saved plan
+    Applied --> Drifted: manual read-only drift
+    Applied --> RolledBack: reviewed rollback
+    Applied --> Destroyed: two-stage destroy
+    ExternalReview --> Rejected: review or guard failure
+    note right of ExternalReview
+      External events do not change
+      local ready_for_review state
+    end note
+    Denied --> [*]
+    Rejected --> [*]
+    Drifted --> [*]
+    RolledBack --> [*]
+    Destroyed --> [*]

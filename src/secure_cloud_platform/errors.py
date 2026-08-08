@@ -23,7 +23,3 @@ class MissingProviderAdapterError(DomainError):
 
 class AdapterProviderMismatchError(DomainError):
     """An adapter registry key does not match the adapter declaration."""
-
-
-class SimulationModeRequiredError(DomainError):
-    """A simulation was requested by an installation in another mode."""

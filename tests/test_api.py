@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -101,6 +103,74 @@ def test_rejected_setup_is_structured_and_retryable() -> None:
     assert retry.status_code == 201
 
 
-def test_api_has_no_apply_or_proposal_endpoint() -> None:
+def test_api_has_no_apply_plan_or_destroy_endpoint() -> None:
     paths = {route.path for route in create_app(PlatformService()).routes}
-    assert not any("apply" in path or "proposal" in path for path in paths)
+    assert not any(
+        action in path for path in paths for action in ("apply", "plan", "destroy")
+    )
+
+
+def test_api_proposal_retry_keeps_created_status_and_truthful_state() -> None:
+    service = PlatformService()
+    client = TestClient(create_app(service))
+    assert (
+        client.post("/v1/platform/installations", json={"provider": "aws"}).status_code
+        == 201
+    )
+    request = client.post(
+        "/v1/environment-requests",
+        json=make_request().model_dump(mode="json"),
+        headers={"Idempotency-Key": "proposal-state-request"},
+    )
+    request_id = request.json()["request"]["request_id"]
+    body = {"request_id": request_id}
+    first = client.post(
+        "/v1/deployment-proposals",
+        json=body,
+        headers={"Idempotency-Key": "proposal-state"},
+    )
+    retry = client.post(
+        "/v1/deployment-proposals",
+        json=body,
+        headers={"Idempotency-Key": "proposal-state"},
+    )
+    assert first.status_code == 201
+    assert retry.status_code == 201
+    assert first.json() == retry.json()
+    assert first.json()["state"] == "ready_for_review"
+
+
+@pytest.mark.parametrize("mode", ["sandbox", "enterprise"])
+def test_api_accepts_proposal_only_modes(mode: str) -> None:
+    service = PlatformService()
+    client = TestClient(create_app(service))
+    setup = client.post(
+        "/v1/platform/installations",
+        json={"provider": "aws", "mode": mode},
+    )
+    assert setup.status_code == 201
+    descriptors = client.get("/v1/platform/modes").json()["modes"]
+    descriptor = next(item for item in descriptors if item["mode"] == mode)
+    assert descriptor["execution"] == "proposal-only"
+
+    request = client.post(
+        "/v1/environment-requests",
+        json=make_request().model_dump(mode="json"),
+        headers={"Idempotency-Key": f"{mode}-request"},
+    )
+    assert request.status_code == 200
+    assert request.json()["state"] == "accepted"
+    request_id = request.json()["request"]["request_id"]
+    proposal = client.post(
+        "/v1/deployment-proposals",
+        json={"request_id": request_id},
+        headers={"Idempotency-Key": f"{mode}-proposal"},
+    )
+    assert proposal.status_code == 201
+    assert proposal.json()["mode"] == mode
+    tfvars = next(
+        artifact["content"]
+        for artifact in proposal.json()["artifacts"]
+        if artifact["relative_path"].endswith(".auto.tfvars.json")
+    )
+    assert json.loads(tfvars)["mode"] == mode

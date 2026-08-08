@@ -1,0 +1,19 @@
+flowchart LR
+    request[Request and policy event]
+    proposal[Proposal and review event]
+    deploy[Protected workflow event]
+    provider[AWS CloudTrail/Config
+or Azure Activity Log/Policy]
+    runtime[Cluster and platform logs]
+    central[Central archive and searchable logs]
+    alerts[Security, budget, drift alerts]
+    audit[Audit record
+IDs, actor, commit, plan hash]
+    request --> audit
+    proposal --> audit
+    deploy --> audit
+    provider --> central
+    runtime --> central
+    central --> alerts
+    alerts --> audit
+    audit --> operations[Operations and incident review]

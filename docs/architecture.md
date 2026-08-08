@@ -20,7 +20,7 @@ flowchart LR
 
     developer -->|Portal, API, or CLI request| platform
     admin -->|Selects provider and mode| platform
-    platform -->|Creates proposal| github
+    platform -->|Creates local review bundle| github
     github -. optional protected deployment .-> aws
     github -. optional protected deployment .-> azure
 
@@ -47,7 +47,8 @@ CLI ------------------/    Provider adapter          protected deployment
 - Common policy expresses outcomes; provider policy expresses native controls.
 - AWS and Azure Terraform implementations remain separate.
 - Real values and credentials remain outside the public repository.
-- Simulation is the default implementation and test boundary.
+- Simulation/proposal creation and credential-free infrastructure checks are
+  the local execution boundary.
 
 ## Quality attributes
 
@@ -62,12 +63,13 @@ CLI ------------------/    Provider adapter          protected deployment
   inputs and equivalent API, CLI, and portal results.
 
 Detailed component, sequence, provider topology, identity, state, logging,
-threat, and incident diagrams will be added alongside their implementations.
+threat, and incident diagrams are included as release-candidate design
+evidence. Their real deployment edges remain guarded and unexecuted.
 
 ## Shared interface flow
 
 The [interface flow](diagrams/rendered/interface-flow.svg) shows the implemented
-Milestone 5 boundary. The React portal calls FastAPI through its generated
+interface boundary. The React portal calls FastAPI through its generated
 OpenAPI client, while the Typer CLI calls the same application service
 directly. Both paths reach the same normalization, policy, provider routing,
 and deterministic result contracts. Neither path can apply infrastructure.
@@ -83,6 +85,10 @@ The [provider-selection state diagram](diagrams/rendered/provider-selection.svg)
 shows the installation lifecycle. The administrator selects a provider and
 mode before activation. Once activated, the provider is locked; a request for
 the other provider must use a separate installation and state boundary.
+
+The complete [diagram index](diagrams/README.md) now includes the component,
+proposal, protected deployment/rollback, AWS, Azure, state, policy, logging,
+trust-boundary, and incident views required for the release-candidate design.
 
 These diagrams are rendered from the
 [`docs/diagrams/src/`](diagrams/src/system-context.mmd) directory with a

@@ -1,0 +1,29 @@
+{
+  "provider": "aws",
+  "mode": "sandbox",
+  "environment": "production",
+  "owner": "platform-team",
+  "cost_centre": "cc-example",
+  "data_classification": "internal",
+  "cloud_identifiers_used": false,
+  "request": {"provider": "azure"},
+  "network": {"kubernetes_api_private": false, "nodes_private": false},
+  "encryption": {"at_rest": false, "in_transit": true, "key_rotation": false},
+  "logging": {"central": false, "audit": false, "control_plane": false},
+  "identity": {
+    "least_privilege": false,
+    "federation": {
+      "issuer": "https://token.actions.githubusercontent.com",
+      "audience": "sts.amazonaws.com",
+      "subject": "*",
+      "lifecycle_roles": {"plan": "same-role", "apply": "same-role", "destroy": "same-role"},
+      "actions": ["iam:*"]
+    }
+  },
+  "budget": {"monthly_limit": 0, "alerts_enabled": false},
+  "resources": {
+    "eks": {"endpoint_public_access": true, "node_subnet_visibility": "public", "secrets_encryption": "none"},
+    "cloudtrail": {"enabled": false, "log_file_validation": false},
+    "s3": {"state_encryption": "AES256", "public_access_block": false}
+  }
+}

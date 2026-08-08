@@ -1,7 +1,7 @@
 # Domain model and contracts
 
-Milestone 2 establishes the provider-neutral boundary used by the future API,
-CLI, portal, policy engine, and provider implementations. It is deliberately
+Milestone 2 established the provider-neutral boundary now used by the API,
+CLI, portal, policy engine, proposals, and provider implementations. It is deliberately
 small: it describes what an installation and environment request mean without
 importing an AWS or Azure SDK.
 
@@ -71,7 +71,7 @@ The common evaluator checks:
 
 The evaluator receives an explicit date so tests and proposals remain
 reproducible. Provider adapters return the same neutral violation contract.
-Common and provider decisions merge in a stable order, allowing every future
+Common and provider decisions merge in a stable order, allowing every
 interface to show the same explanation.
 
 ## Adapter ports
@@ -84,7 +84,7 @@ interface to show the same explanation.
 3. deterministic simulation resources.
 
 `AWSProviderAdapter` and `AzureProviderAdapter` are explicit, statically
-narrowed protocol names for the two future implementations. They are not
+narrowed protocol names for the two concrete implementations. They are not
 runtime-checkable marker protocols because structural runtime checks cannot
 distinguish them. They do not expose SDK clients, account IDs, subscriptions,
 regions, Terraform resources, or credentials. A registry entry whose key does

@@ -12,7 +12,12 @@ import {
 } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { api, type EnvironmentRequestInput } from "../api/client";
+import {
+  api,
+  apiErrorFields,
+  apiErrorMessage,
+  type EnvironmentRequestInput,
+} from "../api/client";
 
 const defaults: EnvironmentRequestInput = {
   application: "",
@@ -181,8 +186,18 @@ export function NewRequestPage() {
             </Button>
             {mutation.isError && (
               <Alert severity="error" role="alert">
-                The request could not be submitted. Try again with the same
-                request key or correct the input.
+                {apiErrorMessage(
+                  mutation.error,
+                  "The request could not be submitted.",
+                )}
+                {apiErrorFields(mutation.error).map((field) => (
+                  <Typography
+                    key={`${field.code}-${field.field}`}
+                    component="div"
+                  >
+                    {field.field}: {field.message}
+                  </Typography>
+                ))}
               </Alert>
             )}
           </Stack>

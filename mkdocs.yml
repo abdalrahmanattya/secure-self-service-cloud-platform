@@ -27,13 +27,39 @@ nav:
   - Home: index.md
   - Simulation quickstart: simulation-quickstart.md
   - Product overview: product-overview.md
+  - Architecture tour: architecture-tour.md
+  - Proposal lifecycle: proposal-lifecycle.md
   - Architecture: architecture.md
   - Domain model and contracts: domain-model.md
   - Shared interfaces: interfaces.md
   - Provider selection: provider-selection.md
   - Providers:
+      - Overview: providers/README.md
       - AWS simulation: providers/aws.md
+      - AWS sandbox and enterprise: providers/aws-deployment.md
       - Azure simulation: providers/azure.md
+      - Azure sandbox and enterprise: providers/azure-deployment.md
+  - References:
+      - Overview: reference/README.md
+      - API: reference/api.md
+      - CLI: reference/cli.md
+      - Portal: reference/portal.md
+      - Terraform modules: terraform-modules.md
+      - Runtime containers and Helm: runtime-delivery.md
+      - Policy: policy-reference.md
+      - Authentication and OIDC: authentication-oidc.md
+      - State model: state-model.md
+      - Security and threat model: security-threat-model.md
+      - Cost model: cost-model.md
+      - Provider comparison: provider-comparison.md
+  - Operations:
+      - Overview: operations/README.md
+      - Protected deployment: operations/deployment.md
+      - Drift: operations/drift.md
+      - Rollback: operations/rollback.md
+      - Destroy and expiry: operations/destroy.md
+      - Incident response: operations/incidents.md
+      - Troubleshooting: operations/troubleshooting.md
   - Diagrams: diagrams/README.md
   - Decisions:
       - Overview: decisions/README.md
@@ -41,5 +67,11 @@ nav:
       - Provider-neutral domain and adapter ports: decisions/ADR-002-provider-neutral-domain-and-adapter-ports.md
       - Credential-free provider simulations: decisions/ADR-003-credential-free-provider-simulations.md
       - One service for every interface: decisions/ADR-004-one-service-for-api-cli-and-portal.md
+      - Deterministic proposal bundles: decisions/ADR-005-deterministic-proposal-bundles.md
+      - GitHub-only protected deployment: decisions/ADR-006-github-only-protected-deployment.md
+  - Portfolio demo: portfolio-demo.md
+  - Retrospective: retrospective.md
+  - Release-candidate checklist: release-candidate-checklist.md
+  - Glossary: glossary.md
 
 strict: true
