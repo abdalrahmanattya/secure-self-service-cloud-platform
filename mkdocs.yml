@@ -1,0 +1,36 @@
+site_name: Secure Self-Service Cloud Platform
+site_description: Provider-selectable self-service Kubernetes environment platform for AWS or Azure
+repo_url: https://github.com/abdalrahmanattya/secure-self-service-cloud-platform
+repo_name: abdalrahmanattya/secure-self-service-cloud-platform
+
+theme:
+  name: material
+  features:
+    - navigation.indexes
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - search.suggest
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+nav:
+  - Home: index.md
+  - Product overview: product-overview.md
+  - Architecture: architecture.md
+  - Provider selection: provider-selection.md
+  - Diagrams: diagrams/README.md
+  - Decisions:
+      - Overview: decisions/README.md
+      - One provider per installation: decisions/ADR-001-one-provider-per-installation.md
+
+strict: true

@@ -1,0 +1,48 @@
+name: Feature
+description: Propose one bounded product or platform outcome.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user or operational problem should be solved?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: Describe observable behavior, not an implementation wish list.
+    validations:
+      required: true
+  - type: dropdown
+    id: boundary
+    attributes:
+      label: Boundary
+      options:
+        - Common platform
+        - AWS
+        - Azure
+        - Portal
+        - API
+        - CLI
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List verifiable conditions for completion.
+    validations:
+      required: true
+  - type: textarea
+    id: risk
+    attributes:
+      label: Security, cost, and rollback
+      description: Explain relevant risks and recovery considerations.
+    validations:
+      required: true
