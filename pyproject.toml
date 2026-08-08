@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "secure-self-service-cloud-platform"
+version = "0.2.0"
+description = "Provider-neutral contracts for a secure self-service cloud platform"
+readme = "README.md"
+requires-python = ">=3.13,<3.15"
+license = { file = "LICENSE" }
+authors = [{ name = "Abdalrahman Attya" }]
+dependencies = ["pydantic==2.13.4"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/secure_cloud_platform"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/secure_cloud_platform", "tests", "README.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers"
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+packages = ["secure_cloud_platform"]
+mypy_path = "src"
+disallow_any_generics = true
+warn_unused_ignores = true

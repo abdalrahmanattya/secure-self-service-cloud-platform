@@ -10,3 +10,8 @@ and the project will use [Semantic Versioning](https://semver.org/).
 ### Added
 
 - Initial portfolio, governance, and architecture foundation.
+- Provider-neutral immutable installation, request, policy, adapter, and
+  simulation contracts.
+- Deterministic request normalization with canonical JSON, SHA-256 fingerprint,
+  and stable request ID.
+- Credential-free fake-adapter coverage for AWS and Azure simulation routes.
