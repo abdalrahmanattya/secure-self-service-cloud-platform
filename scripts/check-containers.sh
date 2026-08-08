@@ -3,9 +3,9 @@ set -eu
 
 for dockerfile in containers/api/Dockerfile containers/portal/Dockerfile; do
   test -f "${dockerfile}"
-  test "$(rg -c '^FROM ' "${dockerfile}")" -ge 2
-  rg -q '^USER platform$' "${dockerfile}"
-  if rg -n ':latest|COPY .*\.env|COPY .*secret' "${dockerfile}"; then
+  test "$(grep -Ec '^FROM ' "${dockerfile}")" -ge 2
+  grep -Eq '^USER platform$' "${dockerfile}"
+  if grep -En ':latest|COPY .*\.env|COPY .*secret' "${dockerfile}"; then
     echo "Container ${dockerfile} contains an unpinned or secret-bearing instruction." >&2
     exit 1
   fi
@@ -17,21 +17,21 @@ for template in api-deployment portal-deployment api-service portal-service serv
   test -f "deploy/helm/platform/templates/${template}.yaml"
 done
 
-rg -q 'runAsNonRoot: true' deploy/helm/platform/templates
-rg -q 'readOnlyRootFilesystem: true' deploy/helm/platform/templates
-rg -q 'allowPrivilegeEscalation: false' deploy/helm/platform/templates
-rg -q 'capabilities:' deploy/helm/platform/templates
-rg -q 'livenessProbe:' deploy/helm/platform/templates
-rg -q 'readinessProbe:' deploy/helm/platform/templates
-rg -q 'resources:' deploy/helm/platform/templates
-rg -q 'podAntiAffinity:' deploy/helm/platform/templates
-rg -q 'topologySpreadConstraints:' deploy/helm/platform/templates
-rg -q 'kind: PodDisruptionBudget' deploy/helm/platform/templates
+grep -Eqr 'runAsNonRoot: true' deploy/helm/platform/templates
+grep -Eqr 'readOnlyRootFilesystem: true' deploy/helm/platform/templates
+grep -Eqr 'allowPrivilegeEscalation: false' deploy/helm/platform/templates
+grep -Eqr 'capabilities:' deploy/helm/platform/templates
+grep -Eqr 'livenessProbe:' deploy/helm/platform/templates
+grep -Eqr 'readinessProbe:' deploy/helm/platform/templates
+grep -Eqr 'resources:' deploy/helm/platform/templates
+grep -Eqr 'podAntiAffinity:' deploy/helm/platform/templates
+grep -Eqr 'topologySpreadConstraints:' deploy/helm/platform/templates
+grep -Eqr 'kind: PodDisruptionBudget' deploy/helm/platform/templates
 for pdb in api-pdb portal-pdb; do
-  rg -q '^  unhealthyPodEvictionPolicy: AlwaysAllow$' "deploy/helm/platform/templates/${pdb}.yaml"
+  grep -Eq '^  unhealthyPodEvictionPolicy: AlwaysAllow$' "deploy/helm/platform/templates/${pdb}.yaml"
 done
-rg -q 'kind: NetworkPolicy' deploy/helm/platform/templates/networkpolicy.yaml
-if rg -n 'kind: Secret|password:|client_secret|access_key' deploy/helm/platform; then
+grep -Eq 'kind: NetworkPolicy' deploy/helm/platform/templates/networkpolicy.yaml
+if grep -Enr 'kind: Secret|password:|client_secret|access_key' deploy/helm/platform; then
   echo "Helm chart must not embed secrets." >&2
   exit 1
 fi
