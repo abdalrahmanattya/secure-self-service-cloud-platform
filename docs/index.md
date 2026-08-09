@@ -14,6 +14,7 @@ configured and no cloud operation ran.
 
 - [Simulation quickstart](simulation-quickstart.md)
 - [Product overview](product-overview.md)
+- [Administrator deployment guide](administrator-deployment-guide.md)
 - [Architecture tour](architecture-tour.md)
 - [Proposal lifecycle](proposal-lifecycle.md)
 - [Architecture](architecture.md)

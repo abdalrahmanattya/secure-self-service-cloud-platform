@@ -343,6 +343,7 @@ or start with the [documentation index](docs/index.md) in the repository.
 Important guides include:
 
 - [Product overview](docs/product-overview.md)
+- [Administrator deployment guide](docs/administrator-deployment-guide.md)
 - [Architecture tour](docs/architecture-tour.md)
 - [Provider selection](docs/provider-selection.md)
 - [Proposal lifecycle](docs/proposal-lifecycle.md)

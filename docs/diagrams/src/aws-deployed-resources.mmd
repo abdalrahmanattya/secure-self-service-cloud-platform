@@ -1,0 +1,66 @@
+flowchart TB
+    admin[Administrator chooses one target account,
+region, CIDR ranges, sizing, budget, and DNS/TLS]
+
+    subgraph owned[Administrator-owned AWS organization boundary]
+        org[Existing AWS Organization and account structure
+Sandbox: one non-production account
+Enterprise: separate environment/shared accounts]
+
+        subgraph bootstrap[Bootstrap root creates once]
+            state[S3 Terraform state bucket
+versioning, public-access block, KMS encryption]
+            oidc[GitHub IAM OIDC provider
+separate plan, apply, and destroy roles]
+        end
+
+        subgraph stack[Selected target account: environment root creates]
+            budget[AWS monthly budget
+email notifications]
+
+            subgraph vpc[VPC]
+                igw[Internet gateway]
+                subgraph public[Public egress subnets]
+                    nat[NAT gateway and Elastic IP
+Sandbox: one
+Enterprise: one per Availability Zone]
+                end
+                subgraph private[Private subnets across Availability Zones]
+                    nodes[EKS managed node group]
+                    endpoints[VPC endpoints
+S3, ECR API/Docker, Logs, STS]
+                end
+                eks[Private EKS control-plane endpoint
+encrypted Kubernetes secrets]
+                routes[Public and private route tables]
+            end
+
+            subgraph evidence[Security and audit resources]
+                kms[KMS audit key]
+                audit[S3 audit bucket
+encrypted, versioned, public blocked]
+                trail[Multi-region CloudTrail
+log-file validation]
+                logs[CloudWatch control-plane log group
+365-day retention]
+            end
+
+            iam[EKS cluster and node IAM roles]
+        end
+    end
+
+    admin --> org
+    org --> bootstrap
+    org --> stack
+    oidc -->|short-lived credentials| stack
+    state -. stores Terraform state .-> stack
+    igw --> public
+    public --> nat --> routes --> private
+    private --> nodes
+    nodes --> eks
+    endpoints --> private
+    kms --> eks
+    kms --> audit
+    trail --> audit
+    eks --> logs
+    iam --> eks

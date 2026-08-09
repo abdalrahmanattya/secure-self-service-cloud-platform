@@ -7,6 +7,15 @@ and the project will use [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Consolidated public real-deployment expectations, prerequisites,
+  responsibilities, limitations, and acceptance stages into one authoritative
+  administrator guide linked from the primary product and technical pages.
+- Added detailed AWS and Azure expected-resource diagrams that distinguish
+  administrator-owned cloud boundaries, one-time bootstrap resources, and the
+  environment resources represented by Terraform.
+
 ## [1.0.0] - 2026-08-09
 
 The first stable portfolio release provides a credential-free AWS/Azure

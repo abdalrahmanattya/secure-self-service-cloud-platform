@@ -1,0 +1,58 @@
+flowchart TB
+    admin[Administrator chooses one target subscription,
+region, address ranges, sizing, budget, and DNS/TLS]
+
+    subgraph owned[Administrator-owned Microsoft Entra and Azure boundary]
+        tenant[Existing Entra tenant, management groups,
+and subscription structure
+Sandbox: one non-production subscription
+Enterprise: separate environment/shared subscriptions]
+
+        subgraph bootstrap[Bootstrap root creates once]
+            state[Storage account and blob container
+versioning, infrastructure encryption]
+            statepe[State private endpoint for fail-closed bootstrap
+administrator-supplied subnet and private DNS]
+            oidc[User-assigned identities and federated credentials
+separate plan, apply, and destroy roles]
+        end
+
+        subgraph stack[Selected target subscription: environment root creates]
+            rg[Platform resource group]
+            budget[Resource-group monthly budget
+email notifications]
+
+            subgraph vnet[Virtual network]
+                subnets[Private subnets]
+                nsg[Network security group
+deny Internet inbound]
+                nat[NAT gateway and static public egress IP]
+                nodes[Private AKS system node pool
+Azure CNI overlay]
+            end
+
+            aks[Private AKS cluster
+Entra RBAC, OIDC, workload identity]
+            logs[Log Analytics workspace
+365-day retention]
+            vault[Key Vault
+RBAC, purge protection, public access disabled]
+        end
+    end
+
+    admin --> tenant
+    tenant --> bootstrap
+    tenant --> stack
+    oidc -->|short-lived credentials| stack
+    statepe --> state
+    state -. stores Terraform state .-> stack
+    rg --> vnet
+    rg --> aks
+    rg --> logs
+    rg --> vault
+    rg --> budget
+    nsg --> subnets
+    nat --> subnets
+    subnets --> nodes --> aks
+    aks --> logs
+    vault -. application secret integration requires configuration .-> aks

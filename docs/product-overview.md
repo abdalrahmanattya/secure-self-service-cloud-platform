@@ -42,7 +42,10 @@ identity, security, operations, and cost controls.
 
 Administrators install the platform, select AWS or Azure, choose the operating
 mode, configure provider-specific prerequisites, and approve protected
-deployment workflows.
+deployment workflows. The
+[administrator deployment guide](administrator-deployment-guide.md) is the
+authoritative end-to-end description of what the release provides and what a
+real installation must supply.
 
 ### Application developers
 

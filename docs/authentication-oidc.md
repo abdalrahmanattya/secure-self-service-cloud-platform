@@ -4,6 +4,10 @@ The local API/CLI/portal and provider simulations need no cloud credential. The
 repository implements one-time operator bootstrap roots and short-lived GitHub
 OIDC workflow authentication, but neither has been configured or executed.
 
+Read the [administrator deployment guide](administrator-deployment-guide.md)
+before using this identity reference. It defines the complete prerequisite and
+production-readiness boundary that these credentials alone do not satisfy.
+
 ## One-time operator bootstrap
 
 An authorized operator runs exactly one provider bootstrap root after separate

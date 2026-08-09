@@ -6,6 +6,10 @@ provider adapters are credential-free simulations; separate real-capable
 Terraform and bootstrap roots are implemented and mock-validated. The sandbox
 and enterprise pages are implementation references, not live deployment reports.
 
+Start with the
+[administrator deployment guide](../administrator-deployment-guide.md) for the
+complete capability, responsibility, prerequisite, and acceptance boundary.
+
 - [AWS simulation adapter](aws.md)
 - [AWS sandbox and enterprise design](aws-deployment.md)
 - [Azure simulation adapter](azure.md)

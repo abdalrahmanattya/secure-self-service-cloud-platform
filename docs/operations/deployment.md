@@ -6,6 +6,10 @@ The repository implements manual workflow definitions for proposal input
 publication, plan, apply, drift, rollback, destroy plan, and destroy apply. They
 are the only real-capable boundary and have not run against a provider.
 
+This page is the workflow reference. Start with the
+[administrator deployment guide](../administrator-deployment-guide.md) for the
+complete service, infrastructure, security, cost, and acceptance journey.
+
 ## Fail-closed gates
 
 Real lifecycle jobs require all of the following:

@@ -5,6 +5,12 @@ application chart under `deploy/helm/platform`. They are implemented and their
 security contracts are locally checked; no image or chart is published by this
 release.
 
+See the
+[administrator deployment guide](administrator-deployment-guide.md) before
+using these artifacts. A running chart is only one part of a real installation
+and does not provide production authentication, persistence, routing, secrets,
+or operational integration by itself.
+
 ## Containers
 
 - API: Python `3.13.7` builder/runtime, local wheel installation, UID/GID
