@@ -9,6 +9,10 @@ and the project will use [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Redesigned the portal with a professional responsive sidebar and design
+  system, guided workflows, accessible states and copy controls, and route-level
+  code splitting; cloud execution remains external and protected rather than
+  running directly from the portal.
 - Restructured the public README into a shorter audience-oriented portfolio
   landing page with an honest simulated portal screenshot, clearer local quick
   start, provider deployment paths, and production-readiness boundaries.

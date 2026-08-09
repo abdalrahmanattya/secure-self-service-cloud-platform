@@ -22,10 +22,14 @@ resources, and creates a deterministic proposal for review.
 
 ## Portal preview
 
-The portal provides a friendly setup, request, policy, and proposal-review
-experience for platform users.
+The responsive portal is a dark-sidebar control-plane experience for a
+provider-locked installation. On smaller screens the sidebar becomes a mobile
+drawer. API-derived metrics, guided request/policy/proposal flows, readiness and
+operations views, and accessible evidence and copy controls keep the review
+path clear. It has no direct cloud lifecycle controls; protected external
+workflows own any eventual execution.
 
-![Secure Self-Service Cloud Platform portal dashboard](docs/images/portal-dashboard.png)
+![Secure Self-Service Cloud Platform portal dashboard](docs/images/portal-dashboard.jpg)
 
 ## How it works
 
@@ -97,11 +101,40 @@ cd web
 npm run dev -- --host 127.0.0.1
 ```
 
-Open <http://127.0.0.1:5173/setup>, select AWS or Azure, keep **Simulation**
-selected, activate the installation, create a request, review the policy and
-resource descriptions, and create a proposal. The API stores demo records in
-process memory; restarting it clears them. The Vite development server proxies
-portal API calls to port 8000.
+Open <http://127.0.0.1:5173/setup> and follow this walkthrough:
+
+1. Choose **AWS** or **Azure**, then choose **Simulation**. The provider is
+   locked when you select **Create installation**; AWS and Azure are separate
+   installation choices, not a hybrid setup.
+2. On **Environment dashboard**, confirm the installation context and
+   API-derived **Requests**, **Accepted requests**, **Review proposals**, and
+   **Cloud changes** metrics. The last metric remains `0` because the portal
+   does not execute cloud changes.
+3. Select **New request**. Complete the grouped **Ownership**, **Environment
+   intent**, **Infrastructure**, and **Governance** inputs. The region is
+   prefilled from the installation's allowed-region default, and the **Request
+   summary** updates live with application, environment, region, budget, and
+   installation context.
+4. Select **Review request**. An accepted request shows **Request accepted**,
+   evaluated provider resources, and **Create review proposal**. A denied
+   request shows **Request denied** with field-level policy feedback and no
+   proposal button. Return to **New request**, correct the inputs, and submit
+   again.
+5. For an accepted request, select **Create review proposal**. In the
+   proposal-evidence view headed **Deployment proposal**, inspect the **Ready
+   for review** status, linked request, IDs, content hash, fingerprint, and
+   deterministic artifact accordions. The first artifact is expanded initially;
+   the others can be expanded. Use the copy controls for IDs and hashes; copy
+   success or failure is announced accessibly.
+6. Open **Readiness** to distinguish available credential-free capabilities
+   from **Guarded** administrator-owned prerequisites. Open **Operations** to
+   review proposal evidence and the guarded lifecycle: GitHub review, protected
+   plan, approval, apply, and drift/rollback/destroy stages are described as
+   not executed.
+7. The API keeps installation, request, proposal, and idempotency state in
+   process memory. Restarting the API resets the local demo. Any protected
+   external workflow is a separate operator-controlled hand-off; the portal,
+   API, and CLI do not apply infrastructure or claim that cloud execution ran.
 
 For the complete walkthrough, including policy-denial examples and Azure,
 read the [simulation quickstart](docs/simulation-quickstart.md).

@@ -106,15 +106,18 @@ results.
 The portal is designed for users who should not need Terraform knowledge. It
 provides:
 
-- An installation wizard for provider and mode selection.
-- A guided environment-request form.
-- Request detail with field-level policy and simulated resources.
-- Proposal creation/detail with IDs, content hash, and artifact previews.
-- An operations view listing local proposals and external lifecycle boundaries.
-- Platform-readiness and operations views.
+- A responsive dark-sidebar shell with a mobile navigation drawer.
+- An installation wizard that locks one provider and selects a mode.
+- A guided, grouped environment-request form with a live summary.
+- API-derived dashboard metrics and installation context.
+- Request review with field-level policy and simulated resources.
+- Proposal evidence with **Ready for review** status, expandable artifacts, and
+  accessible copy feedback.
+- Platform-readiness and operations views that mark protected stages **Guarded**
+  and not executed.
 
 The portal explains policy failures beside the affected field and uses plain
-language for provider-specific requirements.
+language for provider-specific requirements and guarded lifecycle boundaries.
 
 ### REST API
 

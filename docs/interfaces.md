@@ -80,22 +80,31 @@ infrastructure.
 
 ## Portal pages
 
-- **Setup** selects the provider and installation mode once. All modes can
+- **Setup** selects the provider and installation mode once, then locks the
+  provider for the installation. All modes can
   evaluate requests and create local review proposals; simulation also
   returns mocked provider resources, while sandbox and enterprise remain
   proposal-only until protected deployment is configured.
-- **Dashboard** summarizes the installation and request history.
-- **New environment** collects business and platform requirements without
+- **Dashboard** summarizes installation context with API-derived request,
+  accepted-request, proposal, and zero-cloud-change metrics.
+- **New environment** groups business and platform requirements without
   requiring Terraform knowledge. The provider is displayed from the profile,
-  and the profile's first allowed region is prefilled.
-- **Request result** displays accepted or denied records, field-level policy
-  feedback, stable request ID, simulated resources, and proposal creation for
-  accepted requests.
-- **Proposal** shows state, provider/mode, request link, content hash, schema,
-  artifact paths, and content previews.
-- **Operations** lists process-memory proposals and explicitly marks GitHub
-  review and all later protected stages as external/not executed.
-- **Readiness** explains the selected provider, mode, and simulation boundary.
+  and the profile's first allowed region is prefilled; a live summary follows
+  application, environment, region, budget, and installation context.
+- **Request review** displays accepted or denied records, field-level policy
+  feedback, stable request ID, simulated resources, and **Create review
+  proposal** only for accepted requests.
+- **Proposal evidence** shows **Ready for review**, provider/mode, request link,
+  content hash, schema, expandable artifact previews, and accessible copy
+  feedback.
+- **Operations** lists process-memory proposals and marks GitHub review and all
+  later protected stages **Guarded** and not executed.
+- **Readiness** explains the selected provider, mode, available capabilities,
+  guarded prerequisites, and zero direct cloud changes.
+
+The shell uses a responsive dark sidebar on desktop and an **Open navigation**
+mobile drawer on smaller screens. There are no portal controls for plan, apply,
+drift, rollback, or destroy.
 
 The portal uses React Router, TanStack Query, React Hook Form, Material UI,
 and a client typed from OpenAPI. `web/openapi.json` is exported locally by
