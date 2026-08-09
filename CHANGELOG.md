@@ -9,6 +9,9 @@ and the project will use [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Restructured the public README into a shorter audience-oriented portfolio
+  landing page with an honest simulated portal screenshot, clearer local quick
+  start, provider deployment paths, and production-readiness boundaries.
 - Consolidated public real-deployment expectations, prerequisites,
   responsibilities, limitations, and acceptance stages into one authoritative
   administrator guide linked from the primary product and technical pages.

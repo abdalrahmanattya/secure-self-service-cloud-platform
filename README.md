@@ -1,294 +1,197 @@
 # Secure Self-Service Cloud Platform
 
+[![Quality](https://github.com/abdalrahmanattya/secure-self-service-cloud-platform/actions/workflows/quality.yml/badge.svg)](https://github.com/abdalrahmanattya/secure-self-service-cloud-platform/actions/workflows/quality.yml)
+[![Documentation](https://github.com/abdalrahmanattya/secure-self-service-cloud-platform/actions/workflows/pages.yml/badge.svg)](https://github.com/abdalrahmanattya/secure-self-service-cloud-platform/actions/workflows/pages.yml)
+[![Latest release](https://img.shields.io/github/v/release/abdalrahmanattya/secure-self-service-cloud-platform)](https://github.com/abdalrahmanattya/secure-self-service-cloud-platform/releases/latest)
+[![MIT license](https://img.shields.io/github/license/abdalrahmanattya/secure-self-service-cloud-platform)](LICENSE)
+
 A portfolio-grade internal developer platform for requesting secure,
 policy-compliant Kubernetes environments on either Amazon Web Services (AWS)
 or Microsoft Azure.
 
-Platform administrators choose one cloud provider when installing the
-platform. Developers can then use a friendly web portal, REST API, or CLI to
-submit a small environment request. The platform normalizes the request,
-evaluates governance policies, describes the proposed provider resources, and
-creates deterministic evidence for review.
+An administrator selects one provider and one operating mode. Developers then
+use a friendly portal, REST API, or CLI to submit requests. The platform
+normalizes each request, evaluates policy, describes the expected provider
+resources, and creates a deterministic proposal for review.
 
-This repository is safe to demonstrate without cloud credentials. The local
-simulation does not contact AWS or Azure, create infrastructure, or incur cloud
-cost.
+> **Status:** `v1.0.0` stable portfolio release. The local simulation,
+> proposal generation, Terraform validation, policy checks, protected workflow
+> designs, containers, Helm chart, documentation, and diagrams are included.
+> No runtime images are published, and no real cloud environment has been
+> deployed or validated.
 
-> **Status:** `v1.0.0` stable portfolio release. The local simulation, proposal
-> generation, Terraform validation, policy checks, protected workflow designs,
-> containers, Helm chart, documentation, and diagrams are implemented. No real
-> cloud environment has been deployed.
+## Portal preview
+
+The portal provides a friendly setup, request, policy, and proposal-review
+experience for platform users.
+
+![Secure Self-Service Cloud Platform portal dashboard](docs/images/portal-dashboard.png)
+
+## How it works
 
 ![Secure Self-Service Cloud Platform system context](docs/diagrams/rendered/system-context.svg)
 
-## Why this project exists
+## Key capabilities
 
-Creating a cloud environment normally requires knowledge of networking,
-Kubernetes, identity, encryption, logging, policy, budgets, Terraform, and
-CI/CD. When every application team solves those concerns independently,
-security and operational standards drift.
+- One provider-locked installation for AWS or Azure; this is not a hybrid-cloud
+  deployment system.
+- Simulation, sandbox, and enterprise operating modes with different safety
+  boundaries.
+- One domain model shared by the React portal, FastAPI API, and Typer CLI.
+- Friendly policy feedback for ownership, cost, network, data classification,
+  encryption, private Kubernetes, logging, expiry, and production controls.
+- Deterministic request IDs, fingerprints, resource descriptions, proposal
+  hashes, and review artifacts.
+- Separate AWS and Azure Terraform roots with provider-native network,
+  Kubernetes, identity, logging, encryption, state, and budget designs.
+- Protected GitHub workflow designs for proposal review, plan, apply, drift,
+  rollback, and destroy. Direct `terraform apply` is not exposed through the
+  portal, API, or CLI.
 
-This platform turns those concerns into one reusable, reviewable path:
+## Who uses it
 
-```text
-Developer request
-      |
-      v
-Portal / API / CLI
-      |
-      v
-Validation + policy
-      |
-      v
-Provider-specific architecture evidence
-      |
-      v
-Deterministic proposal (ready_for_review)
-      |
-      v
-Protected deployment workflows (disabled until configured)
-      |
-      +----> AWS Terraform root
-      +----> Azure Terraform root
-```
+- Platform administrators select the provider and mode, configure guardrails,
+  and approve protected workflows.
+- Developers request standard environments without needing to design all cloud
+  infrastructure themselves.
+- Security teams review policy, identity, encryption, and audit boundaries.
+- Operations teams own monitoring, drift, incident response, rollback, and
+  recovery.
+- Finance teams define budgets, expiry, and cost attribution requirements.
 
-The codebase supports both providers, but one installation manages only its
-selected provider. It is not a hybrid-cloud deployment system. To manage both
-providers, run two separate installations with separate configuration and
-state.
+## Choose your path
 
-## What you can demonstrate
+| Goal | Start here | What to expect |
+| --- | --- | --- |
+| Evaluate the design | [Published documentation](https://abdalrahmanattya.github.io/secure-self-service-cloud-platform/) and [architecture tour](docs/architecture-tour.md) | Review the product, interfaces, security model, and provider diagrams. |
+| Run the local demo | [Local quick start](#local-quick-start) and [simulation guide](docs/simulation-quickstart.md) | Use mocked providers with no credentials, cloud calls, resources, or cost. |
+| Prepare a real deployment | [Administrator deployment guide](docs/administrator-deployment-guide.md) | Supply private AWS/Azure and GitHub values, publish your own images, configure identity and state, and complete acceptance testing. |
+| Contribute | [Contributing guide](CONTRIBUTING.md) | Run the relevant checks, explain the change, and keep public documentation accurate. |
 
-- Select AWS or Azure and lock the installation to that provider.
-- Choose simulation, sandbox, or enterprise mode.
-- Submit the same environment request through the portal, API, or CLI.
-- See friendly policy feedback for unsafe or unsupported requests.
-- Inspect deterministic request IDs, fingerprints, resource descriptions, and
-  proposal hashes.
-- Materialize a review bundle containing normalized requests, policy evidence,
-  proposal metadata, and provider-specific Terraform inputs.
-- Review separate AWS and Azure Terraform modules and security guardrails.
-- Review protected plan, apply, drift, rollback, and two-stage destroy workflow
-  designs without executing them.
+## Local quick start
 
-Simulation is the executable local demonstration. Sandbox and enterprise modes
-can evaluate requests and create review proposals locally, but remain
-proposal-only until an operator configures protected deployment.
-
-## Quick start
-
-The recommended local setup runs the API and portal from source. It requires no
-AWS or Azure credentials.
-
-### 1. Prerequisites
-
-Install:
-
-- Git
-- Python 3.13
-- Node.js 22 with npm
-- `curl` for the health check
-
-The commands below work on macOS and Linux and assume a POSIX-compatible shell.
-
-### 2. Clone the repository
+The executable demonstration uses the API and portal from source. It requires
+Python 3.13, Node.js 22 with npm, Git, and `curl`; it does not require AWS or
+Azure credentials.
 
 ```sh
 git clone https://github.com/abdalrahmanattya/secure-self-service-cloud-platform.git
 cd secure-self-service-cloud-platform
-```
-
-### 3. Install the Python application
-
-From the repository root:
-
-```sh
 python3.13 -m venv .venv
 . .venv/bin/activate
 python -m pip install --requirement requirements/dev.txt
+cd web && npm ci && cd ..
 ```
 
-This installs the FastAPI service, the `platform` CLI, and the development
-tools in an isolated virtual environment.
-
-### 4. Install the portal dependencies
-
-Still from the repository root:
-
-```sh
-cd web
-npm ci
-cd ..
-```
-
-`npm ci` installs the exact versions recorded in `web/package-lock.json`.
-
-### 5. Start the API
-
-Open terminal 1 in the repository root:
+Start the API in terminal 1:
 
 ```sh
 . .venv/bin/activate
-python -m uvicorn secure_cloud_platform.api:app \
-  --host 127.0.0.1 \
-  --port 8000
+python -m uvicorn secure_cloud_platform.api:app --host 127.0.0.1 --port 8000
 ```
 
-Leave this terminal running. Verify the API from another terminal:
-
-```sh
-curl --fail http://127.0.0.1:8000/health
-```
-
-Expected response:
-
-```json
-{"status":"ok","simulation":true}
-```
-
-Useful API addresses:
-
-| Address | Purpose |
-| --- | --- |
-| <http://127.0.0.1:8000/docs> | Interactive OpenAPI/Swagger interface |
-| <http://127.0.0.1:8000/health> | Health check |
-| <http://127.0.0.1:8000/version> | Application version |
-| <http://127.0.0.1:8000/metrics> | Local text metrics |
-
-### 6. Start the web portal
-
-Open terminal 2 in the repository root:
+Check <http://127.0.0.1:8000/health>, then start the portal in terminal 2:
 
 ```sh
 cd web
 npm run dev -- --host 127.0.0.1
 ```
 
-Open <http://127.0.0.1:5173> in a browser. The development server forwards API
-requests to `127.0.0.1:8000`, so the API from the previous step must remain
-running.
+Open <http://127.0.0.1:5173/setup>, select AWS or Azure, keep **Simulation**
+selected, activate the installation, create a request, review the policy and
+resource descriptions, and create a proposal. The API stores demo records in
+process memory; restarting it clears them. The Vite development server proxies
+portal API calls to port 8000.
 
-In the portal:
+For the complete walkthrough, including policy-denial examples and Azure,
+read the [simulation quickstart](docs/simulation-quickstart.md).
 
-1. Open <http://127.0.0.1:5173/setup> and select AWS or Azure.
-2. Keep **Simulation** selected for the executable local demo.
-3. Activate the installation. The selected provider is then immutable.
-4. Create an environment request from **New request**.
-5. Review the normalized request, provider resources, and policy result.
-6. Create a proposal and inspect its stable ID, content hash, and evidence.
-7. Open **Operations** to see where protected deployment would begin.
+### Short CLI example
 
-Use AWS region `eu-west-1` or Azure region `northeurope` for the simplest demo.
-The API keeps installation, request, proposal, and idempotency records in
-process memory. Restarting the API clears the portal's local demo data.
-
-### 7. Try the CLI
-
-Open terminal 3 in the repository root and reactivate the Python environment:
+First create `request.json` using the full example in the [simulation
+guide](docs/simulation-quickstart.md), then run the commands below.
 
 ```sh
 . .venv/bin/activate
-```
-
-Create and validate an AWS simulation profile:
-
-```sh
-platform setup init \
-  --provider aws \
-  --mode simulation \
-  --output profile.json
-
+platform setup init --provider aws --mode simulation --output profile.json
 platform setup validate profile.json
-platform setup status profile.json
-```
-
-Create a local example request:
-
-```sh
-cat > request.json <<'EOF'
-{
-  "application": "payments-api",
-  "environment": "production",
-  "owner": "Platform Team",
-  "cost_centre": "FIN-042",
-  "data_classification": "internal",
-  "region": "eu-west-1",
-  "network_cidr": "10.42.0.0/16",
-  "cluster_size": "small",
-  "monthly_budget": "250.00",
-  "business_justification": "Credential-free portfolio demonstration",
-  "non_production_expiry": null
-}
-EOF
-```
-
-Validate, render, and materialize its proposal:
-
-```sh
 platform request validate request.json --profile profile.json
 platform request render request.json --profile profile.json
-platform request propose request.json \
-  --profile profile.json \
-  --output proposal-bundle
+platform request propose request.json --profile profile.json --output proposal-bundle
 ```
 
-The `proposal-bundle` directory contains the review evidence and generated
-Terraform input values. These commands do not run Terraform or contact AWS.
-To try Azure instead, create a separate profile with `--provider azure`, change
-the request region to `northeurope`, and use a different output directory.
+CLI proposal generation is local and deterministic; it does not run Terraform
+or contact AWS or Azure.
 
-The CLI reconstructs its service from the supplied profile for each command.
-It does not share the API process's in-memory records, so CLI-created requests
-do not appear in the running portal.
+## AWS and Azure deployment model
 
-### 8. Stop the services
+The platform supports AWS and Azure as alternative installation targets. An
+installation chooses exactly one provider; managing both means two separate
+installations, deployment repositories, identities, state backends, and
+operating boundaries.
 
-Press `Ctrl-C` in the portal terminal and then in the API terminal. Activate
-the virtual environment again with `. .venv/bin/activate` when returning to the
-project later.
+The public repository contains the application, separate provider modules,
+policy, workflow definitions, and expected-resource designs. An administrator
+must provide private account or subscription values, network and identity
+configuration, protected GitHub settings, durable state, runtime image
+references, ingress, DNS, TLS, secrets, and operational controls.
 
-For a more detailed walkthrough, including policy-denial examples, see the
-[local simulation quickstart](docs/simulation-quickstart.md) and
-[portfolio demo](docs/portfolio-demo.md).
+Read the [administrator deployment guide](docs/administrator-deployment-guide.md)
+before planning a real installation. It explains responsibilities, stop
+conditions, sandbox versus enterprise expectations, and the private deployment
+repository model.
+
+Expected resource diagrams:
+
+- [AWS topology and identity](docs/diagrams/rendered/aws-topology.svg)
+- [AWS expected resources](docs/diagrams/rendered/aws-deployed-resources.svg)
+- [Azure topology and identity](docs/diagrams/rendered/azure-topology.svg)
+- [Azure expected resources](docs/diagrams/rendered/azure-deployed-resources.svg)
+- [Complete diagram catalogue](docs/diagrams/README.md)
+
+These diagrams describe the intended architecture represented by the Terraform
+roots. They are not evidence that an account, subscription, VPC/VNet, subnet,
+EKS/AKS cluster, or other cloud resource currently exists.
+
+## Production-readiness and security boundary
+
+The release is designed to be extended into a protected deployment, but it is
+not a turnkey managed service or live-cloud-certified distribution. Before a
+real installation, an administrator must at minimum:
+
+- use a private deployment repository and protected GitHub Environments;
+- establish provider state, OIDC trust, roles/identities, and least-privilege
+  access;
+- build and publish reviewed immutable API and portal images;
+- connect the portal and API through an ingress or gateway with TLS;
+- add durable application storage, backup, retention, and recovery;
+- integrate organizational authentication, authorization, and audit controls;
+- verify monitoring, alerting, budgets, drift, rollback, and destroy paths; and
+- complete provider-specific sandbox acceptance before enterprise use.
+
+The included workflows fail closed by default and require exact proposal and
+commit bindings, manual dispatch, approval, concurrency controls, and
+short-lived OIDC credentials. Do not commit credentials, Terraform state,
+saved plans, private variable files, or real account/subscription values.
 
 ## Containers and Kubernetes packaging
 
-The repository includes non-root, multi-stage Docker images for the API and
-portal. Build them from the repository root:
+The repository includes non-root, multi-stage Dockerfiles and a Helm chart for
+the API and portal. Build locally with:
 
 ```sh
-docker build --file containers/api/Dockerfile \
-  --tag secure-cloud-platform-api:local .
-
-docker build --file containers/portal/Dockerfile \
-  --tag secure-cloud-platform-portal:local .
+docker build --file containers/api/Dockerfile --tag secure-cloud-platform-api:local .
+docker build --file containers/portal/Dockerfile --tag secure-cloud-platform-portal:local .
+helm template platform deploy/helm/platform --namespace secure-cloud-platform
 ```
 
-Run the API container locally:
+The portal image is a static artifact and needs deployment ingress or gateway
+routing to the API. The chart uses placeholder image repositories. No runtime
+images are published by this repository.
 
-```sh
-docker run --rm --publish 8000:8000 secure-cloud-platform-api:local
-```
+## Testing and validation
 
-The portal image is a static production artifact intended to be wired to the
-API by a deployment ingress or gateway. For a complete local portal demo, use
-the source-based quick start above, where Vite supplies the API proxy.
-
-The Helm chart can be rendered without contacting Kubernetes:
-
-```sh
-helm template platform deploy/helm/platform \
-  --namespace secure-cloud-platform
-```
-
-The chart's default image repositories are placeholders. Rendering validates
-the Kubernetes manifests; it does not deploy them. A real installation must
-supply reviewed image references, ingress/gateway routing, workload identity,
-and provider-specific protected configuration.
-
-## Run the main checks
-
-Python checks, from the repository root with the virtual environment active:
+With the Python virtual environment active:
 
 ```sh
 python -m pytest
@@ -297,69 +200,36 @@ python -m ruff format --check .
 python -m mypy
 ```
 
-Portal checks:
+For the portal and public documentation:
 
 ```sh
-cd web
-npm run check
-npm run build
-```
-
-Documentation checks require the pinned documentation dependencies:
-
-```sh
+cd web && npm run check && npm run build && cd ..
 python -m pip install --requirement requirements/docs.txt
 python -m mkdocs build --strict
 scripts/check-markdown-links.sh
 scripts/check-repository-hygiene.sh
 ```
 
-Terraform, policy, workflow, container, diagram, and full release checks are
-described in the
-[v1.0.0 release record](docs/release-candidate-checklist.md).
-
-## Architecture and security
-
-The application uses one provider-neutral domain and policy layer with
-explicit AWS and Azure adapters. FastAPI and Typer share the same application
-service, while the React portal calls the API. Provider-specific Terraform
-roots remain separate.
-
-Real-capable plan, apply, drift, rollback, and two-stage destroy workflows are
-inert by default. They require a private repository, manual dispatch from the
-default branch, exact proposal and commit bindings, independent review,
-protected GitHub Environments, concurrency controls, configured state, and
-short-lived OIDC authentication.
-
-Local validation must not contact AWS or Azure. Never commit credentials,
-Terraform state, saved plans, private variable files, or real deployment
-configuration.
+The [release checklist](docs/release-candidate-checklist.md) describes the
+broader Terraform, policy, workflow, container, Helm, diagram, and acceptance
+checks.
 
 ## Documentation
 
-Browse the
-[published documentation website](https://abdalrahmanattya.github.io/secure-self-service-cloud-platform/)
-or start with the [documentation index](docs/index.md) in the repository.
-Important guides include:
-
+- [Published documentation](https://abdalrahmanattya.github.io/secure-self-service-cloud-platform/)
 - [Product overview](docs/product-overview.md)
 - [Administrator deployment guide](docs/administrator-deployment-guide.md)
-- [Architecture tour](docs/architecture-tour.md)
-- [Provider selection](docs/provider-selection.md)
-- [Proposal lifecycle](docs/proposal-lifecycle.md)
-- [AWS and Azure designs](docs/providers/README.md)
+- [AWS and Azure provider designs](docs/providers/README.md)
 - [Portal, API, and CLI reference](docs/reference/README.md)
 - [Security threat model](docs/security-threat-model.md)
 - [Operations runbooks](docs/operations/README.md)
 - [Architecture diagrams](docs/diagrams/README.md)
 - [Architecture decisions](docs/decisions/README.md)
 
-## Contributing and security
+## Contributing, security, and license
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a change. Report
 suspected vulnerabilities using the private process in [SECURITY.md](SECURITY.md),
 not through a public issue.
-
-## License
 
 This project is available under the [MIT License](LICENSE).
