@@ -171,7 +171,7 @@ running.
 
 In the portal:
 
-1. Open **Setup** and select AWS or Azure.
+1. Open <http://127.0.0.1:5173/setup> and select AWS or Azure.
 2. Keep **Simulation** selected for the executable local demo.
 3. Activate the installation. The selected provider is then immutable.
 4. Create an environment request from **New request**.
