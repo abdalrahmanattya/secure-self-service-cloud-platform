@@ -54,11 +54,33 @@ npm ci
 npm run dev -- --host 127.0.0.1
 ```
 
-Open <http://127.0.0.1:5173>. Vite proxies API, health, version, and metrics
-requests to `127.0.0.1:8000`. Use the setup page to select exactly one
-provider. All modes can evaluate requests and create deterministic review
-proposals locally. Simulation also returns mocked provider resources; sandbox
-and enterprise are proposal-only and cannot perform cloud operations.
+Open <http://127.0.0.1:5173/setup>. Vite proxies API, health, version, and
+metrics requests to `127.0.0.1:8000`. Select exactly one provider and one mode;
+the provider is immutable after installation. Simulation returns mocked
+provider resources, while sandbox and enterprise remain proposal-only locally.
+
+## Walk through the portal
+
+1. On **Choose your platform**, choose **AWS** or **Azure**, keep
+   **Simulation** selected, review the boundary, and select **Create
+   installation**.
+2. On **Environment dashboard**, check the installation context and the
+   API-derived request, accepted-request, proposal, and zero-cloud-change
+   metrics. Select **New request**.
+3. Complete the **Ownership**, **Environment intent**, **Infrastructure**, and
+   **Governance** groups. The installation's first allowed region is prefilled;
+   the **Request summary** updates as you type. Select **Review request**.
+4. Inspect **Request accepted** or **Request denied**. Accepted requests show
+   evaluated resources and **Create review proposal**; denied requests show
+   policy feedback and do not offer proposal creation.
+5. In the proposal-evidence view headed **Deployment proposal**, review the
+   **Ready for review** metadata and expand the deterministic artifact
+   accordions. The first starts expanded; copy controls expose accessible
+   feedback for IDs and hashes.
+6. Visit **Readiness** and **Operations** to see available capabilities and
+   **Guarded** external stages. Those stages are described as not executed.
+
+For the full UI behavior and safety boundary, see the [portal reference](reference/portal.md).
 
 ## Create and validate a CLI profile
 
