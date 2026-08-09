@@ -22,10 +22,14 @@ resources, and creates a deterministic proposal for review.
 
 ## Portal preview
 
-The portal provides a friendly setup, request, policy, and proposal-review
-experience for platform users.
+The responsive portal is a cloud control-plane experience for a provider-locked
+installation: dashboard metrics are derived from the API, guided workflows lead
+users from environment request to review, and policy/proposal evidence remains
+visible throughout. Guarded operations make protected next steps clear without
+executing directly against AWS or Azure; execution is not performed by the
+portal and remains controlled by separate protected workflows.
 
-![Secure Self-Service Cloud Platform portal dashboard](docs/images/portal-dashboard.png)
+![Secure Self-Service Cloud Platform portal dashboard](docs/images/portal-dashboard.jpg)
 
 ## How it works
 

@@ -11,6 +11,7 @@ import { DashboardPage } from "./DashboardPage";
 import { NewRequestPage } from "./NewRequestPage";
 import { OperationsPage } from "./OperationsPage";
 import { ProposalPage } from "./ProposalPage";
+import { ReadinessPage } from "./ReadinessPage";
 import { RequestPage } from "./RequestPage";
 import { SetupPage } from "./SetupPage";
 
@@ -127,6 +128,7 @@ function renderPortal(element: ReactNode, initialEntries = ["/"]) {
             <Route path="/requests/new" element={<NewRequestPage />} />
             <Route path="/requests/:requestId" element={<RequestPage />} />
             <Route path="/operations" element={<OperationsPage />} />
+            <Route path="/readiness" element={<ReadinessPage />} />
             <Route path="/proposals/:proposalId" element={<ProposalPage />} />
           </Routes>
         </MemoryRouter>
@@ -209,6 +211,30 @@ describe("portal interfaces", () => {
       screen.getByRole("button", { name: /create installation/i }),
     );
     expect(api.createInstallation).toHaveBeenCalledWith("aws", "sandbox");
+  });
+
+  it("selects Azure and Enterprise from accessible cards before creating an installation", async () => {
+    const user = userEvent.setup();
+    renderPortal(<SetupPage />, ["/setup"]);
+
+    const azure = await screen.findByRole("radio", {
+      name: "Provider: Microsoft Azure",
+    });
+    azure.focus();
+    await user.keyboard("{Enter}");
+    expect(azure).toHaveAttribute("aria-checked", "true");
+
+    const enterprise = await screen.findByRole("radio", {
+      name: "Mode: Enterprise",
+    });
+    enterprise.focus();
+    await user.keyboard(" ");
+    expect(enterprise).toHaveAttribute("aria-checked", "true");
+
+    await user.click(
+      screen.getByRole("button", { name: /create installation/i }),
+    );
+    expect(api.createInstallation).toHaveBeenCalledWith("azure", "enterprise");
   });
 
   it("keeps setup defaults in range while discovery is loading", () => {
@@ -348,7 +374,7 @@ describe("portal interfaces", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("lists proposals while marking later lifecycle stages as not executed", async () => {
+  it("lists proposals with guarded external stages described as not executed", async () => {
     vi.mocked(api.proposals).mockResolvedValue({ proposals: [proposal] });
     renderPortal(<OperationsPage />, ["/operations"]);
 
@@ -358,9 +384,80 @@ describe("portal interfaces", () => {
       }),
     ).toBeInTheDocument();
     expect(screen.getAllByText("Ready for review").length).toBeGreaterThan(1);
-    expect(screen.getAllByText("Not executed").length).toBeGreaterThan(1);
+    expect(screen.getAllByText(/guarded/i).length).toBeGreaterThan(1);
     expect(
-      screen.queryByRole("button", { name: /plan|apply|destroy/i }),
+      screen.getByText(/external cloud stages have run/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/no direct apply control exists here/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /plan|apply|destroy|rollback/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows configured readiness capabilities and guarded prerequisites without execution controls", async () => {
+    renderPortal(<ReadinessPage />, ["/readiness"]);
+
+    expect(
+      await screen.findByRole("heading", { name: /platform readiness/i }),
+    ).toBeInTheDocument();
+    expect(await screen.findByText("demo")).toBeInTheDocument();
+    expect(screen.getByText("Request evaluation")).toBeInTheDocument();
+    expect(screen.getByText("Deterministic proposals")).toBeInTheDocument();
+    expect(screen.getByText("Provider-aware simulation")).toBeInTheDocument();
+    expect(screen.getAllByText("Guarded").length).toBe(4);
+    expect(screen.getByText(/not executed here/i)).toBeInTheDocument();
+    expect(screen.queryByText(/%/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /plan|apply|destroy|rollback/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("offers the setup path for an unconfigured readiness page", async () => {
+    vi.mocked(api.installation).mockRejectedValueOnce(new Error("not found"));
+    renderPortal(<ReadinessPage />, ["/readiness"]);
+
+    expect(
+      await screen.findByText("No installation has been created."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /set up installation/i }),
+    ).toHaveAttribute("href", "/setup");
+    expect(screen.getByText("—")).toBeInTheDocument();
+    expect(screen.queryByText(/%/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /plan|apply|destroy|rollback/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("derives populated dashboard metrics and installation context without cloud changes", async () => {
+    const denied = record(false);
+    denied.request.request_id = "env-fedcba9876543210";
+    vi.mocked(api.requests).mockResolvedValue({
+      requests: [record(true), denied],
+    });
+    vi.mocked(api.proposals).mockResolvedValue({ proposals: [proposal] });
+    renderPortal(<DashboardPage />);
+
+    expect(
+      await screen.findByRole("heading", { name: /environment dashboard/i }),
+    ).toBeInTheDocument();
+    expect(await screen.findByText("demo")).toBeInTheDocument();
+    expect(
+      screen.getAllByText("azure", { exact: false }).length,
+    ).toBeGreaterThan(0);
+    expect(screen.getByText("Protected external workflow")).toBeInTheDocument();
+    expect(screen.getByText("No cloud changes executed")).toBeInTheDocument();
+    expect(screen.getByText("Requests").parentElement).toHaveTextContent("2");
+    expect(
+      screen.getByText("Accepted requests").parentElement,
+    ).toHaveTextContent("1");
+    expect(
+      screen.getByText("Review proposals").parentElement,
+    ).toHaveTextContent("1");
+    expect(
+      screen.queryByRole("button", { name: /plan|apply|destroy|rollback/i }),
     ).not.toBeInTheDocument();
   });
 });

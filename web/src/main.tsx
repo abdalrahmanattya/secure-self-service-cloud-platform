@@ -1,19 +1,46 @@
-import { StrictMode } from "react";
+import { lazy, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
-import { DashboardPage } from "./pages/DashboardPage";
-import { NewRequestPage } from "./pages/NewRequestPage";
-import { ReadinessPage } from "./pages/ReadinessPage";
-import { RequestPage } from "./pages/RequestPage";
-import { SetupPage } from "./pages/SetupPage";
-import { OperationsPage } from "./pages/OperationsPage";
-import { ProposalPage } from "./pages/ProposalPage";
 import { theme } from "./theme";
 
 const queryClient = new QueryClient();
+
+const DashboardPage = lazy(() =>
+  import("./pages/DashboardPage").then(({ DashboardPage }) => ({
+    default: DashboardPage,
+  })),
+);
+const SetupPage = lazy(() =>
+  import("./pages/SetupPage").then(({ SetupPage }) => ({ default: SetupPage })),
+);
+const NewRequestPage = lazy(() =>
+  import("./pages/NewRequestPage").then(({ NewRequestPage }) => ({
+    default: NewRequestPage,
+  })),
+);
+const RequestPage = lazy(() =>
+  import("./pages/RequestPage").then(({ RequestPage }) => ({
+    default: RequestPage,
+  })),
+);
+const ReadinessPage = lazy(() =>
+  import("./pages/ReadinessPage").then(({ ReadinessPage }) => ({
+    default: ReadinessPage,
+  })),
+);
+const OperationsPage = lazy(() =>
+  import("./pages/OperationsPage").then(({ OperationsPage }) => ({
+    default: OperationsPage,
+  })),
+);
+const ProposalPage = lazy(() =>
+  import("./pages/ProposalPage").then(({ ProposalPage }) => ({
+    default: ProposalPage,
+  })),
+);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
