@@ -37,9 +37,15 @@ These short recordings use credential-free simulation data. They create no
 cloud resources, make no cloud API calls, and do not run Terraform or apply
 infrastructure.
 
+#### 1. Provider and mode installation setup
+
 [![Portal setup walkthrough: choose a provider and simulation mode](docs/images/portal-setup.gif)](docs/reference/portal.md#setup)
 
+#### 2. Environment request and policy review
+
 [![Portal request review walkthrough: submit a request and inspect the policy decision](docs/images/portal-request-review.gif)](docs/reference/portal.md#request-review)
+
+#### 3. Proposal evidence, readiness, and guarded operations
 
 [![Portal proposal readiness walkthrough: inspect deterministic evidence and review status](docs/images/portal-proposal-readiness.gif)](docs/reference/portal.md#deployment-proposal)
 
