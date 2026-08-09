@@ -31,6 +31,21 @@ workflows own any eventual execution.
 
 ![Secure Self-Service Cloud Platform portal dashboard](docs/images/portal-dashboard.jpg)
 
+### Animated walkthroughs
+
+These short recordings use credential-free simulation data. They create no
+cloud resources, make no cloud API calls, and do not run Terraform or apply
+infrastructure.
+
+[![Portal setup walkthrough: choose a provider and simulation mode](docs/images/portal-setup.gif)](docs/reference/portal.md#setup)
+
+[![Portal request review walkthrough: submit a request and inspect the policy decision](docs/images/portal-request-review.gif)](docs/reference/portal.md#request-review)
+
+[![Portal proposal readiness walkthrough: inspect deterministic evidence and review status](docs/images/portal-proposal-readiness.gif)](docs/reference/portal.md#deployment-proposal)
+
+Read the [authoritative portal reference](docs/reference/portal.md) for the
+complete workflow and its safety boundaries.
+
 ## How it works
 
 ![Secure Self-Service Cloud Platform system context](docs/diagrams/rendered/system-context.svg)

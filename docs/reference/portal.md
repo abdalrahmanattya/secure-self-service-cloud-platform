@@ -9,6 +9,24 @@ proposal evidence. It does not execute a cloud lifecycle.
 This screenshot shows an AWS simulation with one accepted request, one
 ready-for-review proposal, and zero cloud changes.
 
+## Animated walkthroughs
+
+The following recordings demonstrate the main review path using credential-free
+simulation data. They make no cloud API calls, create no cloud resources, and
+do not run Terraform or apply infrastructure.
+
+### Setup walkthrough
+
+[![Portal setup walkthrough: choose AWS and simulation mode](../images/portal-setup.gif)](#setup)
+
+### Request review walkthrough
+
+[![Portal request review walkthrough: submit a request and inspect its policy decision](../images/portal-request-review.gif)](#request-review)
+
+### Proposal readiness walkthrough
+
+[![Portal proposal readiness walkthrough: inspect deterministic proposal evidence](../images/portal-proposal-readiness.gif)](#deployment-proposal)
+
 ## Shell and navigation
 
 The shell uses a dark **Secure Self-Service Cloud Platform** sidebar. On

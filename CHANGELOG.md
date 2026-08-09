@@ -9,6 +9,9 @@ and the project will use [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Added linked portal walkthrough recordings for setup, request review, and
+  proposal readiness; the recordings use credential-free simulation and make
+  zero cloud changes.
 - Redesigned the portal with a professional responsive sidebar and design
   system, guided workflows, accessible states and copy controls, and route-level
   code splitting; cloud execution remains external and protected rather than
