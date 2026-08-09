@@ -1,6 +1,6 @@
 # Secure Self-Service Cloud Platform
 
-`v1.0.0` is the stable portfolio release. The local simulation is executable;
+`v1.0.0` is the stable release. The local simulation is executable;
 real cloud setup and deployment require separate operator configuration and
 approval and have not been run.
 
@@ -89,7 +89,7 @@ every team become an expert in every cloud service.
 - **Safe operations:** real changes require an approved proposal, an exact
   commit, a verified plan, and protected approval.
 
-The portfolio demonstration runs simulation and proposal creation locally. The
+The simulation demonstration runs simulation and proposal creation locally. The
 protected definitions provide a path to a real AWS or Azure
 installation when the administrator has
 approved accounts or subscriptions, identity configuration, state storage,
@@ -267,7 +267,7 @@ Enterprise mode validates that required boundaries are configured and that
 security, logging, shared services, and production do not collapse into an
 uncontrolled shared account or subscription.
 
-In the local portfolio-release boundary, sandbox and enterprise requests are
+In the local release boundary, sandbox and enterprise requests are
 proposal-only: they can produce `ready_for_review` bundles, but cloud lifecycle
 operations require the separately configured protected GitHub workflows.
 

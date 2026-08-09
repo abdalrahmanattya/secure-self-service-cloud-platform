@@ -16,7 +16,7 @@ and the project will use [Semantic Versioning](https://semver.org/).
   system, guided workflows, accessible states and copy controls, and route-level
   code splitting; cloud execution remains external and protected rather than
   running directly from the portal.
-- Restructured the public README into a shorter audience-oriented portfolio
+- Restructured the public README into a shorter audience-oriented product
   landing page with an honest simulated portal screenshot, clearer local quick
   start, provider deployment paths, and production-readiness boundaries.
 - Consolidated public real-deployment expectations, prerequisites,
@@ -28,14 +28,14 @@ and the project will use [Semantic Versioning](https://semver.org/).
 
 ## [1.0.0] - 2026-08-09
 
-The first stable portfolio release provides a credential-free AWS/Azure
+The first stable release provides a credential-free AWS/Azure
 self-service platform demonstration, deterministic proposal evidence, and
 reviewed real-deployment designs. No real cloud setup, authentication,
 approval, or operation was run for this release.
 
 ### Added
 
-- Initial portfolio, governance, and architecture foundation.
+- Initial product, governance, and architecture foundation.
 - Provider-neutral immutable installation, request, policy, adapter, and
   simulation contracts.
 - Deterministic request normalization with canonical JSON, SHA-256 fingerprint,
@@ -59,7 +59,7 @@ approval, or operation was run for this release.
   concurrency, protected Environments, and short-lived OIDC.
 - Non-root multi-stage API and portal container definitions and a hardened Helm
   chart for the two workloads.
-- Portfolio-grade documentation covering deterministic proposal
+- Documentation covering deterministic proposal
   bundles, GitHub-only protected deployment, AWS and Azure sandbox/enterprise
   designs, Terraform and policy references, OIDC, state, security, cost,
   operations, drift, rollback, destroy, incidents, troubleshooting, and the
@@ -69,8 +69,8 @@ approval, or operation was run for this release.
 
 ### Notes
 
-- Milestones 1–7 are implemented and validated within the credential-free
-  portfolio-release boundary.
+- The current release is implemented and validated within the credential-free
+  simulation and proposal workflow boundary.
 - Proposal persistence is process-local and the truthful proposal state is
   `ready_for_review`; protected GitHub approval is external to that state.
 - Simulation, sandbox, and enterprise installations all support credential-free

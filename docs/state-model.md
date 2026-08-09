@@ -1,7 +1,8 @@
 # State model
 
 The implementation separates local application state, review artifacts, saved
-plans, and provider state. Only the first exists during the local portfolio demo.
+plans, and provider state. Only the first exists during the local simulation
+demonstration.
 
 ![State model](diagrams/rendered/state-model.svg)
 

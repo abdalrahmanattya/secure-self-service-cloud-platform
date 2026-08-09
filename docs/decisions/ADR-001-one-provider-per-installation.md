@@ -44,6 +44,6 @@ platform does not migrate or synchronize environments across clouds.
 - **Hybrid installation:** rejected because it expands identity, networking,
   failure, and state complexity without being required by the product goal.
 - **AWS-only or Azure-only codebase:** rejected because provider choice is a
-  core portfolio and product requirement.
+  core product requirement.
 - **Provider switching in place:** rejected because existing state and cloud
   resources cannot be safely reinterpreted as another provider.

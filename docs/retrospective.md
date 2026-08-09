@@ -8,7 +8,7 @@
   and proposal review explain the same request.
 - A GitHub review boundary creates a useful separation between requesting an
   environment and changing a cloud account or subscription.
-- Simulation gives a reproducible portfolio demo without credentials or cost.
+- Simulation gives a reproducible local evaluation without credentials or cost.
 - Provider-specific Terraform roots, OPA policy, protected workflow guards,
   containers, and Helm can be validated without authenticating to a provider.
 

@@ -49,7 +49,7 @@ Positive consequences:
 - Provider lock and request fingerprints make installation ownership explicit.
 - Both provider routes can be tested credential-free with fake adapters.
 - Provider implementations can evolve independently behind stable ports.
-- Simulation remains safe and reproducible for portfolio demonstrations.
+- Simulation remains safe and reproducible for local evaluation.
 
 Trade-offs:
 

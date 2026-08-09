@@ -57,7 +57,7 @@ identities, state, and operations.
 
 | Mode | Intended boundary | Production | Recommended use |
 | --- | --- | --- | --- |
-| simulation | no account or subscription | represented locally only | evaluation, development, and portfolio demonstration |
+| simulation | no account or subscription | represented locally only | local evaluation and development |
 | sandbox | one AWS account or one Azure subscription | forbidden by policy | first real integration and lifecycle acceptance |
 | enterprise | separated accounts or subscriptions plus shared services | explicitly governed | organization-owned implementation after sandbox proof |
 
@@ -65,7 +65,7 @@ Start with sandbox. Enterprise requires an existing organizational landing
 zone and operating model; this repository does not create the complete AWS
 multi-account or Azure management-group/subscription hierarchy.
 
-## Keep the portfolio repository public and deployment private
+## Keep the source repository public and deployment private
 
 The included real-capable workflows require a private repository. A practical
 installation keeps this source repository public for evaluation and uses a

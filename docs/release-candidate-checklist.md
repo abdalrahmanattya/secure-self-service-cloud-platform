@@ -1,6 +1,6 @@
 # v1.0.0 release record
 
-`v1.0.0` is the first stable portfolio release. Its executable scope is the
+`v1.0.0` is the first stable release. Its executable scope is the
 credential-free local simulation and deterministic proposal workflow. Real
 AWS/Azure deployment remains operator-configured and was not run or certified
 for this release.

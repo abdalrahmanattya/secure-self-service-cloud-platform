@@ -4,8 +4,8 @@ The Secure Self-Service Cloud Platform gives development teams a consistent,
 reviewable way to request Kubernetes environments on a platform installation
 configured for either AWS or Azure.
 
-`v1.0.0` is the stable portfolio release. Milestones 1–7 are implemented and
-validated without credentials: provider simulations, deterministic proposals,
+`v1.0.0` is the stable release. The release is validated
+without credentials: provider simulations, deterministic proposals,
 API/CLI/portal flows, Terraform mock tests, policy, protected workflow
 definitions, containers, and Helm. No real provider was authenticated or
 configured and no cloud operation ran.
@@ -31,7 +31,7 @@ configured and no cloud operation ran.
 - [Cost model](cost-model.md)
 - [Operations runbooks](operations/README.md)
 - [Provider comparison](provider-comparison.md)
-- [Portfolio demo](portfolio-demo.md)
+- [Simulation demonstration](simulation-demonstration.md)
 - [Retrospective](retrospective.md)
 - [v1.0.0 release record](release-candidate-checklist.md)
 - [Architecture decisions](decisions/README.md)

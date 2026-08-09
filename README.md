@@ -5,7 +5,7 @@
 [![Latest release](https://img.shields.io/github/v/release/abdalrahmanattya/secure-self-service-cloud-platform)](https://github.com/abdalrahmanattya/secure-self-service-cloud-platform/releases/latest)
 [![MIT license](https://img.shields.io/github/license/abdalrahmanattya/secure-self-service-cloud-platform)](LICENSE)
 
-A portfolio-grade internal developer platform for requesting secure,
+An internal developer platform for requesting secure,
 policy-compliant Kubernetes environments on either Amazon Web Services (AWS)
 or Microsoft Azure.
 
@@ -14,7 +14,7 @@ use a friendly portal, REST API, or CLI to submit requests. The platform
 normalizes each request, evaluates policy, describes the expected provider
 resources, and creates a deterministic proposal for review.
 
-> **Status:** `v1.0.0` stable portfolio release. The local simulation,
+> **Status:** `v1.0.0` stable release. The local simulation,
 > proposal generation, Terraform validation, policy checks, protected workflow
 > designs, containers, Helm chart, documentation, and diagrams are included.
 > No runtime images are published, and no real cloud environment has been

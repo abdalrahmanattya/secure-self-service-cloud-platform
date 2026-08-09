@@ -71,7 +71,7 @@ nav:
       - One service for every interface: decisions/ADR-004-one-service-for-api-cli-and-portal.md
       - Deterministic proposal bundles: decisions/ADR-005-deterministic-proposal-bundles.md
       - GitHub-only protected deployment: decisions/ADR-006-github-only-protected-deployment.md
-  - Portfolio demo: portfolio-demo.md
+  - Simulation demonstration: simulation-demonstration.md
   - Retrospective: retrospective.md
   - v1.0.0 release record: release-candidate-checklist.md
   - Glossary: glossary.md
