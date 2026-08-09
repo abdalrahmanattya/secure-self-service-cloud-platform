@@ -14,11 +14,10 @@ This repository is safe to demonstrate without cloud credentials. The local
 simulation does not contact AWS or Azure, create infrastructure, or incur cloud
 cost.
 
-> **Status:** `v1.0.0rc1` release candidate. The local simulation, proposal
+> **Status:** `v1.0.0` stable portfolio release. The local simulation, proposal
 > generation, Terraform validation, policy checks, protected workflow designs,
-> containers, Helm chart, documentation, and diagrams are implemented. No
-> release tag has been published and no real cloud environment has been
-> deployed.
+> containers, Helm chart, documentation, and diagrams are implemented. No real
+> cloud environment has been deployed.
 
 ![Secure Self-Service Cloud Platform system context](docs/diagrams/rendered/system-context.svg)
 
@@ -315,9 +314,9 @@ scripts/check-markdown-links.sh
 scripts/check-repository-hygiene.sh
 ```
 
-Terraform, policy, workflow, container, diagram, and full release-candidate
-checks are described in the
-[release-candidate checklist](docs/release-candidate-checklist.md).
+Terraform, policy, workflow, container, diagram, and full release checks are
+described in the
+[v1.0.0 release record](docs/release-candidate-checklist.md).
 
 ## Architecture and security
 

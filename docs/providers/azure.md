@@ -84,4 +84,4 @@ configuration remains operator-owned.
 
 Azure bootstrap, state, and protected lifecycle definitions remain separate
 from this adapter. Their real credentials/subscription configuration and any
-execution require explicit operator approval and are absent in this RC.
+execution require explicit operator approval and are absent in this release.

@@ -1,7 +1,7 @@
 # State model
 
 The implementation separates local application state, review artifacts, saved
-plans, and provider state. Only the first exists during the local RC demo.
+plans, and provider state. Only the first exists during the local portfolio demo.
 
 ![State model](diagrams/rendered/state-model.svg)
 
@@ -25,4 +25,5 @@ proposal/tfvars/plan SHA-256 values and exact workflow run IDs, and retain
 proposal/plan artifacts for one day. Artifacts must not be copied to public
 issues, pull requests, release assets, or Pages.
 
-No state backend or GitHub artifact has been created by this release candidate.
+No provider state backend or protected lifecycle artifact was created by this
+release.

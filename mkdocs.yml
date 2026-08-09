@@ -72,7 +72,7 @@ nav:
       - GitHub-only protected deployment: decisions/ADR-006-github-only-protected-deployment.md
   - Portfolio demo: portfolio-demo.md
   - Retrospective: retrospective.md
-  - Release-candidate checklist: release-candidate-checklist.md
+  - v1.0.0 release record: release-candidate-checklist.md
   - Glossary: glossary.md
 
 strict: true

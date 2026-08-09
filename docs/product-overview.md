@@ -1,8 +1,8 @@
 # Secure Self-Service Cloud Platform
 
-`v1.0.0` release candidate, not a published release. The local simulation is
-executable; real cloud setup and deployment require separate operator
-configuration and approval and have not been run.
+`v1.0.0` is the stable portfolio release. The local simulation is executable;
+real cloud setup and deployment require separate operator configuration and
+approval and have not been run.
 
 The Secure Self-Service Cloud Platform is an internal developer platform for
 requesting consistent, governed cloud environments. It combines a friendly
@@ -58,7 +58,7 @@ those requirements before deployment.
 
 ### Operations teams
 
-Operations teams use proposal evidence and runbooks in the local RC. A real
+Operations teams use proposal evidence and runbooks in the local release. A real
 installation would add deployment history, provider logs, health, and drift
 evidence after operator configuration.
 
@@ -86,8 +86,8 @@ every team become an expert in every cloud service.
 - **Safe operations:** real changes require an approved proposal, an exact
   commit, a verified plan, and protected approval.
 
-The release-candidate demonstration runs simulation and proposal creation
-locally. The protected definitions provide a path to a real AWS or Azure
+The portfolio demonstration runs simulation and proposal creation locally. The
+protected definitions provide a path to a real AWS or Azure
 installation when the administrator has
 approved accounts or subscriptions, identity configuration, state storage,
 budgets, and cleanup procedures.
@@ -261,7 +261,7 @@ Enterprise mode validates that required boundaries are configured and that
 security, logging, shared services, and production do not collapse into an
 uncontrolled shared account or subscription.
 
-In the local release-candidate boundary, sandbox and enterprise requests are
+In the local portfolio-release boundary, sandbox and enterprise requests are
 proposal-only: they can produce `ready_for_review` bundles, but cloud lifecycle
 operations require the separately configured protected GitHub workflows.
 

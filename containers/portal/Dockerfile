@@ -1,4 +1,4 @@
-# RC limitation: exact base tags are pinned; digest promotion is main-review work.
+# Release limitation: exact base tags are pinned; digest promotion is follow-up work.
 FROM node:22.14.0-bookworm-slim AS builder
 
 WORKDIR /app

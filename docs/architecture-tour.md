@@ -4,7 +4,7 @@ The platform turns a small environment request into reviewable evidence. A
 single installation owns one provider and one state boundary. Portal, API, and
 CLI inputs converge on the same domain service. Implemented protected workflow
 definitions are the only real-capable path allowed to request cloud credentials,
-and they are disabled and unconfigured in this release candidate.
+and they are disabled and unconfigured in this release.
 
 ## Status boundary
 

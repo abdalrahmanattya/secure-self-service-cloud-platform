@@ -13,7 +13,7 @@ implemented simulation and intentionally stops before any cloud boundary.
    stable ID, content hash, `ready_for_review`, and provider variables.
 7. Walk through the validated Terraform/policy/workflow/container/Helm
    definitions, identifying which real-capable stages remain disabled/unrun.
-8. Use the [release-candidate checklist](release-candidate-checklist.md) to
+8. Use the [v1.0.0 release record](release-candidate-checklist.md) to
    explain evidence, limitations, and the next operator approvals.
 
 The demo should say plainly: simulation is executable; no AWS/Azure credential,

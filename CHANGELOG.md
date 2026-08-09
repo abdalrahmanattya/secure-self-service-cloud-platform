@@ -7,10 +7,12 @@ and the project will use [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-This repository is a `v1.0.0` release candidate. It is not a published
-release and has no `v1.0.0` tag. Local simulation, proposal, Terraform fixture,
-policy, workflow, container, and Helm validation is credential-free. No real
-cloud setup, authentication, approval, or operation has run.
+## [1.0.0] - 2026-08-09
+
+The first stable portfolio release provides a credential-free AWS/Azure
+self-service platform demonstration, deterministic proposal evidence, and
+reviewed real-deployment designs. No real cloud setup, authentication,
+approval, or operation was run for this release.
 
 ### Added
 
@@ -38,18 +40,18 @@ cloud setup, authentication, approval, or operation has run.
   concurrency, protected Environments, and short-lived OIDC.
 - Non-root multi-stage API and portal container definitions and a hardened Helm
   chart for the two workloads.
-- Portfolio-grade Milestones 6–7 documentation covering deterministic proposal
+- Portfolio-grade documentation covering deterministic proposal
   bundles, GitHub-only protected deployment, AWS and Azure sandbox/enterprise
   designs, Terraform and policy references, OIDC, state, security, cost,
   operations, drift, rollback, destroy, incidents, troubleshooting, and the
-  release-candidate checklist.
+  v1.0.0 release record.
 - Mermaid source and rendered SVGs for the component, lifecycle, provider,
   state, policy, logging, trust-boundary, and incident views.
 
 ### Notes
 
-- Milestones 3–7 are implemented and locally validated within the credential-
-  free release-candidate boundary.
+- Milestones 1–7 are implemented and validated within the credential-free
+  portfolio-release boundary.
 - Proposal persistence is process-local and the truthful proposal state is
   `ready_for_review`; protected GitHub approval is external to that state.
 - Simulation, sandbox, and enterprise installations all support credential-free
@@ -62,6 +64,9 @@ cloud setup, authentication, approval, or operation has run.
 - A private repository is required by the included real-capable jobs. Proposal
   and saved-plan artifacts are retained for one day; saved plans can contain
   sensitive values and must be handled as protected data.
+- The MkDocs documentation is published through an HTTPS GitHub Pages site.
 - No live AWS or Azure validation, bootstrap, plan, apply, rollback, drift,
-  destroy, or cloud resource operation is claimed. Pages, release, and tag are
-  not published.
+  destroy, or cloud resource operation is claimed.
+
+[Unreleased]: https://github.com/abdalrahmanattya/secure-self-service-cloud-platform/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/abdalrahmanattya/secure-self-service-cloud-platform/releases/tag/v1.0.0

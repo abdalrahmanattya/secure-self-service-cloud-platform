@@ -1,4 +1,4 @@
-# RC limitation: exact base tags are pinned; digest promotion is main-review work.
+# Release limitation: exact base tags are pinned; digest promotion is follow-up work.
 FROM python:3.13.7-slim-bookworm AS builder
 
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \

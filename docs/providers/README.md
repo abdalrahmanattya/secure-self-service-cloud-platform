@@ -22,4 +22,4 @@ and enterprise pages are implementation references, not live deployment reports.
 
 Every real mode requires separate operator setup, protected configuration,
 short-lived OIDC, remote state, budgets, cleanup ownership, and approval. None
-of those real operations is being run for this release candidate.
+of those real operations is being run for this release.

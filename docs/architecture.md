@@ -63,7 +63,7 @@ CLI ------------------/    Provider adapter          protected deployment
   inputs and equivalent API, CLI, and portal results.
 
 Detailed component, sequence, provider topology, identity, state, logging,
-threat, and incident diagrams are included as release-candidate design
+threat, and incident diagrams are included as release design
 evidence. Their real deployment edges remain guarded and unexecuted.
 
 ## Shared interface flow
@@ -88,7 +88,7 @@ the other provider must use a separate installation and state boundary.
 
 The complete [diagram index](diagrams/README.md) now includes the component,
 proposal, protected deployment/rollback, AWS, Azure, state, policy, logging,
-trust-boundary, and incident views required for the release-candidate design.
+trust-boundary, and incident views required for the release design.
 
 These diagrams are rendered from the
 [`docs/diagrams/src/`](diagrams/src/system-context.mmd) directory with a

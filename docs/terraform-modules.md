@@ -8,7 +8,7 @@ backend-disabled init, validate, and mocked `terraform test` for all four roots.
 
 ## Root stacks
 
-| Root | Purpose | RC status |
+| Root | Purpose | v1.0.0 status |
 | --- | --- | --- |
 | `infrastructure/terraform/aws` | VPC, security/logging, private EKS, budget | implemented and mock-tested; never applied |
 | `infrastructure/terraform/azure` | resource group, VNet, security/logging, private AKS, budget | implemented and mock-tested; never applied |
@@ -47,4 +47,4 @@ developer request.
 
 The roots are real-capable definitions, but no provider authentication,
 bootstrap, remote state creation, plan, apply, drift, rollback, or destroy was
-performed for this release candidate.
+performed for this release.

@@ -42,4 +42,4 @@ then test workload token exchange, secret retrieval, logging, and policy.
 **Close:** revoke unnecessary assignments, rotate any exposed secret, record
 propagation timing and root cause, and add a federation/private-endpoint test.
 
-Both scenarios require operator access and are not live exercises in this RC.
+Both scenarios require operator access and are not live exercises in this release.

@@ -36,7 +36,7 @@ for the same installation/state boundary.
 ## Required runtime variables
 
 `REAL_DEPLOYMENT_ENABLED` is a fail-closed repository variable and remains
-absent or false in this RC. The real-capable jobs also require a private
+absent or false in this release. The real-capable jobs also require a private
 repository and the default branch.
 
 | Provider | Protected variables |

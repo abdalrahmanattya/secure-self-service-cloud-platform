@@ -42,7 +42,7 @@ from .providers.azure import AzureSimulationAdapter
 DEMO_TODAY: Final[date] = date(2026, 8, 8)
 
 
-APPLICATION_VERSION: Final[str] = "1.0.0rc1"
+APPLICATION_VERSION: Final[str] = "1.0.0"
 
 
 class InterfaceError(DomainError):

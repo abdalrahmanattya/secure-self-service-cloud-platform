@@ -3,7 +3,7 @@
 The API and portal have separate multi-stage container definitions and one Helm
 application chart under `deploy/helm/platform`. They are implemented and their
 security contracts are locally checked; no image or chart is published by this
-release candidate.
+release.
 
 ## Containers
 
@@ -26,5 +26,5 @@ portal-to-API, and DNS paths. Service-account token automount is disabled. The
 chart deliberately renders no Secret or ExternalSecret; an operator-reviewed
 overlay must supply provider-native workload identity and external secrets.
 
-The RC values use sanitized GHCR example names and `1.0.0-rc.1`; they do not
+The release values use sanitized GHCR example names and `1.0.0`; they do not
 refer to published images.

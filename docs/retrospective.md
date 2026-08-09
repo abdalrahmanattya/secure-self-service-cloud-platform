@@ -1,6 +1,6 @@
 # Milestones 6–7 retrospective
 
-## What the release candidate demonstrates
+## What the v1.0.0 release demonstrates
 
 - One provider-locked product model can serve AWS and Azure without pretending
   their resource and identity models are interchangeable.
@@ -14,7 +14,7 @@
 
 ## What remains deliberately outside the demo
 
-The RC does not claim live cloud validation. Terraform modules, bootstrap,
+The release does not claim live cloud validation. Terraform modules, bootstrap,
 remote state, OIDC trust, protected plan/apply, drift, rollback, and destroy are
 implemented as code/definitions but require operator-owned infrastructure and
 approval. Proposal state is in memory and GitHub approval remains external.

@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "secure-self-service-cloud-platform"
-version = "1.0.0rc1"
-description = "Secure AWS and Azure self-service platform release candidate"
+version = "1.0.0"
+description = "Secure AWS and Azure self-service cloud platform"
 readme = "README.md"
 requires-python = ">=3.13,<3.15"
 license = { file = "LICENSE" }

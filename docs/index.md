@@ -4,11 +4,11 @@ The Secure Self-Service Cloud Platform gives development teams a consistent,
 reviewable way to request Kubernetes environments on a platform installation
 configured for either AWS or Azure.
 
-`v1.0.0` is a release candidate, not a published release. Milestones 3–7 are
-implemented and locally validated without credentials: provider simulations,
-deterministic proposals, API/CLI/portal flows, Terraform mock tests, policy,
-protected workflow definitions, containers, and Helm. No real provider was
-authenticated or configured and no cloud operation ran.
+`v1.0.0` is the stable portfolio release. Milestones 1–7 are implemented and
+validated without credentials: provider simulations, deterministic proposals,
+API/CLI/portal flows, Terraform mock tests, policy, protected workflow
+definitions, containers, and Helm. No real provider was authenticated or
+configured and no cloud operation ran.
 
 ## Start here
 
@@ -32,7 +32,7 @@ authenticated or configured and no cloud operation ran.
 - [Provider comparison](provider-comparison.md)
 - [Portfolio demo](portfolio-demo.md)
 - [Retrospective](retrospective.md)
-- [Release-candidate checklist](release-candidate-checklist.md)
+- [v1.0.0 release record](release-candidate-checklist.md)
 - [Architecture decisions](decisions/README.md)
 - [Diagram index](diagrams/README.md)
 
@@ -45,7 +45,7 @@ Each page identifies whether a path is:
 - **Operator configured:** protected GitHub Environments/variables, provider
   identifiers, bootstrap inputs, and trust settings are not repository defaults.
 - **Not executed:** no real credentials, provider API, remote state, resource,
-  deployment, or cost is used by this release candidate.
+  deployment, or cost is used by this release.
 
-`REAL_DEPLOYMENT_ENABLED` remains absent or false. The release/tag and GitHub
-Pages site are not published.
+`REAL_DEPLOYMENT_ENABLED` remains absent or false. The versioned source and
+documentation are published; real cloud deployment remains separately gated.

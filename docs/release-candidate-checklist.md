@@ -1,9 +1,11 @@
-# v1.0.0 release-candidate checklist
+# v1.0.0 release record
 
-This is a `v1.0.0` release candidate. No `v1.0.0` tag, GitHub release, or Pages
-site is published.
+`v1.0.0` is the first stable portfolio release. Its executable scope is the
+credential-free local simulation and deterministic proposal workflow. Real
+AWS/Azure deployment remains operator-configured and was not run or certified
+for this release.
 
-## Implemented and locally validated
+## Implemented and validated
 
 - [x] AWS and Azure credential-free simulations are executable.
 - [x] API, CLI, and portal share deterministic request/policy results.
@@ -20,8 +22,12 @@ site is published.
   pass.
 - [x] Repository checks reject tracked state, saved plans, generated Terraform
   directories, credentials, and real provider identifiers.
-- [ ] Durable proposal/audit persistence and automatic pull-request publication
-  are implemented (the RC deliberately uses process memory/local bundles).
+
+## Known limitations
+
+- Proposal and audit persistence is process-local.
+- Automatic proposal pull-request publication is not implemented; the CLI
+  materializes a deterministic local bundle for operator-controlled review.
 
 ## Operator acceptance before real cloud use
 
@@ -35,7 +41,7 @@ site is published.
 - [ ] Test state encryption, locking, versioning, recovery, retention, and
   access logging in the selected provider.
 - [ ] Set `REAL_DEPLOYMENT_ENABLED=true` only after every prerequisite passes
-  (it remains absent or false for this RC).
+  (it remains absent or false for this release).
 - [ ] Run and review a non-production real plan with its sensitive one-day
   artifact retention.
 - [ ] Complete approved sandbox apply, drift, rollback, two-stage destroy, and
@@ -45,7 +51,7 @@ site is published.
 
 ## Publication gate
 
-- [ ] Hosted checks pass on the final publication commit.
-- [ ] Changelog/version metadata and security scope are approved.
-- [ ] GitHub Pages is published.
-- [ ] `v1.0.0` tag and GitHub release are published with explicit approval.
+- [x] Hosted checks pass on the final publication commit.
+- [x] Changelog/version metadata and security scope are approved.
+- [x] GitHub Pages is published.
+- [x] `v1.0.0` tag and GitHub release are published with explicit approval.

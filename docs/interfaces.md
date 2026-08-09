@@ -139,4 +139,4 @@ generation. Simulation can additionally return mocked provider resources.
 Sandbox and enterprise are proposal-only locally: no interface can run
 `terraform apply` or make a cloud call. Cloud lifecycle operations are limited
 to separately configured, protected GitHub workflows, which are disabled and
-unexecuted in this release candidate.
+unexecuted in this release.

@@ -29,11 +29,11 @@ cross it only through a short-lived OIDC identity after review and approval.
 | stolen CI token | OIDC short TTL, audience/subject/ref conditions, least privilege | provider trust misconfiguration |
 | plan/apply mismatch | exact commit and saved-plan hash gates | backend/state changes need explicit preflight |
 | secret or state leakage | secret stores, redaction, no public artifacts, encrypted backend | operator logging mistakes |
-| drift hides a security change | manual read-only drift workflow and reconciliation review | no schedule/alert integration in this RC |
+| drift hides a security change | manual read-only drift workflow and reconciliation review | no schedule/alert integration in this release |
 | destroy harms production | mode policy, separate workflow, typed confirmation, approval | human error; use scoped state and backups |
 
 Threat modelling does not replace provider security review, penetration testing,
-or organizational controls. This RC documents the design and local evidence;
+or organizational controls. This release documents the design and local evidence;
 it does not claim a live security assessment.
 
 ## Protected deployment acceptance
