@@ -1,6 +1,6 @@
-# Portfolio demo
+# Simulation demonstration
 
-This is the safe, reproducible demo path for reviewers. It exercises the
+This is a safe, reproducible local workflow for evaluation. It exercises the
 implemented simulation and intentionally stops before any cloud boundary.
 
 1. Follow the [simulation quickstart](simulation-quickstart.md).
@@ -16,6 +16,8 @@ implemented simulation and intentionally stops before any cloud boundary.
 8. Use the [v1.0.0 release record](release-candidate-checklist.md) to
    explain evidence, limitations, and the next operator approvals.
 
-The demo should say plainly: simulation is executable; no AWS/Azure credential,
-state backend, cloud API, resource, or bill is involved; real deployment would
-require separate setup and protected approval.
+## Safety boundary
+
+Simulation is executable locally; no AWS/Azure credential, state backend, cloud
+API, resource, or bill is involved. Real deployment requires separate setup and
+protected approval.

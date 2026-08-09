@@ -6,7 +6,7 @@ Accepted
 
 ## Context
 
-The common domain defines AWS and Azure adapter ports, but the portfolio must
+The common domain defines AWS and Azure adapter ports, but the product must
 demonstrate meaningful provider differences before any account, subscription,
 credential, state backend, or billable resource is introduced.
 
@@ -23,7 +23,7 @@ external services, create remote identifiers, or execute Terraform. AWS and
 Azure stay in separate modules and only the adapter selected by the immutable
 installation profile is invoked.
 
-Simulation descriptions are contracts and portfolio evidence, not claims that
+Simulation descriptions are contracts and review evidence, not claims that
 infrastructure exists.
 
 ## Consequences

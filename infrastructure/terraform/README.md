@@ -18,6 +18,6 @@ the repository quality checks.
 
 Real deployment is an opt-in design for a private repository only. It requires
 protected GitHub Environments, protected environment variables, short-lived
-OIDC identities, and separate approval; the public portfolio repository remains
+OIDC identities, and separate approval; the public source repository remains
 disabled by default and must not receive account, subscription, tenant, state,
 or credential values.
