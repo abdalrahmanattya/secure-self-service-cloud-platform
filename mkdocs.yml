@@ -1,5 +1,6 @@
 site_name: Secure Self-Service Cloud Platform
 site_description: Provider-selectable self-service Kubernetes environment platform for AWS or Azure
+site_url: https://abdalrahmanattya.github.io/secure-self-service-cloud-platform/
 repo_url: https://github.com/abdalrahmanattya/secure-self-service-cloud-platform
 repo_name: abdalrahmanattya/secure-self-service-cloud-platform
 

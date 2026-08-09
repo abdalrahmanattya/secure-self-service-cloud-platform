@@ -338,7 +338,10 @@ configuration.
 
 ## Documentation
 
-Start with the [documentation index](docs/index.md). Important guides include:
+Browse the
+[published documentation website](https://abdalrahmanattya.github.io/secure-self-service-cloud-platform/)
+or start with the [documentation index](docs/index.md) in the repository.
+Important guides include:
 
 - [Product overview](docs/product-overview.md)
 - [Architecture tour](docs/architecture-tour.md)
