@@ -198,14 +198,26 @@ repository model.
 Expected resource diagrams:
 
 - [AWS topology and identity](docs/diagrams/rendered/aws-topology.svg)
-- [AWS expected resources](docs/diagrams/rendered/aws-deployed-resources.svg)
 - [Azure topology and identity](docs/diagrams/rendered/azure-topology.svg)
-- [Azure expected resources](docs/diagrams/rendered/azure-deployed-resources.svg)
 - [Complete diagram catalogue](docs/diagrams/README.md)
 
 These diagrams describe the intended architecture represented by the Terraform
 roots. They are not evidence that an account, subscription, VPC/VNet, subnet,
 EKS/AKS cluster, or other cloud resource currently exists.
+
+### AWS expected deployment design
+
+This is the expected AWS resource design represented by the Terraform roots;
+it has not been deployed or validated in an AWS account.
+
+![AWS expected resources — design only, not deployed or validated](docs/diagrams/rendered/aws-deployed-resources.svg)
+
+### Azure expected deployment design
+
+This is the expected Azure resource design represented by the Terraform roots;
+it has not been deployed or validated in an Azure subscription.
+
+![Azure expected resources — design only, not deployed or validated](docs/diagrams/rendered/azure-deployed-resources.svg)
 
 ## Production-readiness and security boundary
 
