@@ -1,3 +1,5 @@
+<!-- reader-first-readme:v1 -->
+
 # Secure Self-Service Cloud Platform
 
 [![Quality](https://github.com/abdalrahmanattya/secure-self-service-cloud-platform/actions/workflows/quality.yml/badge.svg)](https://github.com/abdalrahmanattya/secure-self-service-cloud-platform/actions/workflows/quality.yml)
@@ -14,11 +16,42 @@ use a friendly portal, REST API, or CLI to submit requests. The platform
 normalizes each request, evaluates policy, describes the expected provider
 resources, and creates a deterministic proposal for review.
 
-> **Status:** `v1.0.0` stable release. The local simulation,
-> proposal generation, Terraform validation, policy checks, protected workflow
-> designs, containers, Helm chart, documentation, and diagrams are included.
-> No runtime images are published, and no real cloud environment has been
-> deployed or validated.
+## The short version
+
+1. An administrator chooses AWS or Azure for one installation and defines its
+   safety rules.
+2. A developer describes the environment an application needs without having
+   to design the cloud network or Kubernetes cluster.
+3. The platform checks ownership, cost, location, networking, data protection,
+   logging, and expiry requirements.
+4. An unsafe request is rejected with specific guidance; an accepted request
+   becomes a repeatable proposal with stable identifiers and hashes.
+5. A reviewer can inspect exactly what would be created before any cloud access
+   is granted.
+6. Only a separately configured, protected GitHub workflow can turn an approved
+   proposal into a cloud plan or deployment.
+
+## A representative developer journey
+
+Imagine a product team needs a temporary test environment. A developer opens
+the portal, selects the application owner, region, network range, monthly
+budget, expiry date, and required data protection. The platform checks the
+request against the organization's rules.
+
+If the request asks for a public Kubernetes cluster or exceeds the allowed
+budget, the developer sees which fields must change. Once it passes, the same
+request produces the same review bundle whether it came from the portal, API,
+or command line. A platform administrator can then carry that bundle into a
+private review process. The portal itself cannot create or delete cloud
+resources.
+
+## Why it is useful
+
+Development teams often wait for specialist help or copy old infrastructure
+when they need a new environment. This platform turns that request into a
+consistent conversation: developers describe the outcome, policies catch
+unsafe or unaffordable choices early, and administrators receive a stable,
+reviewable proposal rather than an undocumented cloud change.
 
 ## Portal preview
 
@@ -52,9 +85,15 @@ infrastructure.
 Read the [authoritative portal reference](docs/reference/portal.md) for the
 complete workflow and its safety boundaries.
 
-## How it works
+## System architecture diagram: how a request moves
 
 ![Secure Self-Service Cloud Platform system context](docs/diagrams/rendered/system-context.svg)
+
+In plain language, developers and administrators use the platform to create a
+checked proposal. All three interfaces share the same rules and provider
+selection. The proposal crosses into GitHub only through an operator-controlled
+handoff. A protected workflow may then target either AWS or Azure—but never both
+from the same installation—and only after separate configuration and approval.
 
 ## Key capabilities
 
@@ -92,6 +131,20 @@ complete workflow and its safety boundaries.
 | Run the local demo | [Local quick start](#local-quick-start) and [simulation guide](docs/simulation-quickstart.md) | Use mocked providers with no credentials, cloud calls, resources, or cost. |
 | Prepare a real deployment | [Administrator deployment guide](docs/administrator-deployment-guide.md) | Supply private AWS/Azure and GitHub values, publish your own images, configure identity and state, and complete acceptance testing. |
 | Contribute | [Contributing guide](CONTRIBUTING.md) | Run the relevant checks, explain the change, and keep public documentation accurate. |
+
+## Technology guide in plain English
+
+| Technology | Its job in this product |
+| --- | --- |
+| React | Builds the visual portal used to configure an installation and review requests. |
+| FastAPI | Provides the web API used by the portal and other integrations. |
+| Typer | Provides the command-line interface for operators who prefer terminal workflows. |
+| Open Policy Agent and Rego | Evaluate requests against written safety and governance rules. Rego is the language used to express those rules. |
+| Terraform | Describes the expected AWS or Azure infrastructure as reviewable configuration. |
+| GitHub Actions | Provides the protected review, plan, approval, deployment, drift, rollback, and removal workflow boundary. |
+| OpenID Connect (OIDC) | Lets an approved workflow obtain short-lived cloud access without storing permanent cloud keys in GitHub. |
+| Docker and Helm | Package the portal and API as containers and describe how they would run on Kubernetes. |
+| Kubernetes | Runs containerized applications across a managed cluster; Amazon EKS and Azure AKS are the provider-managed versions. |
 
 ## Local quick start
 
@@ -177,7 +230,7 @@ platform request propose request.json --profile profile.json --output proposal-b
 CLI proposal generation is local and deterministic; it does not run Terraform
 or contact AWS or Azure.
 
-## AWS and Azure deployment model
+## Exact deployment method for AWS or Azure
 
 The platform supports AWS and Azure as alternative installation targets. An
 installation chooses exactly one provider; managing both means two separate
@@ -195,29 +248,54 @@ before planning a real installation. It explains responsibilities, stop
 conditions, sandbox versus enterprise expectations, and the private deployment
 repository model.
 
-Expected resource diagrams:
-
-- [AWS topology and identity](docs/diagrams/rendered/aws-topology.svg)
-- [Azure topology and identity](docs/diagrams/rendered/azure-topology.svg)
-- [Complete diagram catalogue](docs/diagrams/README.md)
-
-These diagrams describe the intended architecture represented by the Terraform
-roots. They are not evidence that an account, subscription, VPC/VNet, subnet,
-EKS/AKS cluster, or other cloud resource currently exists.
-
 ### AWS expected deployment design
 
-This is the expected AWS resource design represented by the Terraform roots;
-it has not been deployed or validated in an AWS account.
+![Expected AWS installation path from protected review through identity, state, network, Kubernetes, encryption, audit, monitoring, and budget services](docs/images/aws-cloud-architecture.png)
 
-![AWS expected resources — design only, not deployed or validated](docs/diagrams/rendered/aws-deployed-resources.svg)
+An approved workflow receives short-lived access through AWS Identity and
+Access Management (IAM). Terraform state is protected in Amazon S3, while the
+environment design places a private Amazon EKS cluster inside an Amazon VPC.
+AWS KMS protects sensitive data, CloudTrail and CloudWatch provide evidence,
+and AWS Budgets sets a monthly cost boundary.
 
 ### Azure expected deployment design
 
-This is the expected Azure resource design represented by the Terraform roots;
-it has not been deployed or validated in an Azure subscription.
+![Expected Azure installation path from protected review through identity, state, network, Kubernetes, secrets, monitoring, and budget services](docs/images/azure-cloud-architecture.png)
 
-![Azure expected resources — design only, not deployed or validated](docs/diagrams/rendered/azure-deployed-resources.svg)
+The Azure alternative follows the same control pattern with provider-native
+services: federated managed identities, a protected Storage Account, a Virtual
+Network, private Azure Kubernetes Service, Key Vault, Log Analytics, and an
+Azure budget.
+
+Both diagrams describe deployable designs represented by the Terraform roots,
+not currently running shared environments. The release's code and local
+simulation were validated, but no real AWS or Azure installation has been
+executed. An operator who wants a live installation must supply private values,
+build runtime images, configure protected workflows, and complete sandbox
+acceptance in their own account or subscription.
+
+The expected/planned provider resources in these diagrams were not deployed as
+part of release validation; the exact guarded path is documented in the
+[administrator deployment guide](docs/administrator-deployment-guide.md).
+
+The diagrams use the [official AWS Architecture Icons](https://aws.amazon.com/architecture/icons/),
+the [official Microsoft Azure Architecture Icons](https://learn.microsoft.com/azure/architecture/icons/),
+and the official GitHub mark. More detailed expected-resource, topology, trust,
+sequence, and state views remain in the [complete diagram catalogue](docs/diagrams/README.md).
+
+## Important limitations
+
+- The local application keeps installation, request, proposal, and retry state
+  in memory; restarting it clears the demonstration data.
+- The portal and API do not include production user authentication or
+  role-based authorization.
+- Runtime container images are not published, and organization-specific DNS,
+  TLS, secrets, ingress, identity, storage, backup, and recovery are not
+  configured by this public repository.
+- Terraform and policy tests cannot prove provider quotas, live identity,
+  network reachability, long-term reliability, performance, or cost.
+- AWS and Azure are alternatives. Supporting both requires two independent
+  installations and operating boundaries.
 
 ## Production-readiness and security boundary
 
@@ -255,7 +333,7 @@ The portal image is a static artifact and needs deployment ingress or gateway
 routing to the API. The chart uses placeholder image repositories. No runtime
 images are published by this repository.
 
-## Testing and validation
+## What was tested
 
 With the Python virtual environment active:
 
@@ -291,6 +369,19 @@ checks.
 - [Operations runbooks](docs/operations/README.md)
 - [Architecture diagrams](docs/diagrams/README.md)
 - [Architecture decisions](docs/decisions/README.md)
+
+## Repository map
+
+| Location | Contents |
+| --- | --- |
+| `src/secure_cloud_platform` | Shared request model, policies, provider adapters, API, CLI, and proposal service. |
+| `web` | React portal and generated API client. |
+| `policy` | Common, AWS, and Azure policy rules. |
+| `infrastructure/terraform` | Separate bootstrap and environment roots for AWS and Azure. |
+| `deploy/helm` and `containers` | Kubernetes packaging and container definitions. |
+| `.github/workflows` | Quality checks and protected lifecycle workflow designs. |
+| `docs` | Architecture, security, operations, provider, and interface documentation. |
+| `tests` and `examples` | Automated behavior checks and fictional request/proposal examples. |
 
 ## Contributing, security, and license
 
